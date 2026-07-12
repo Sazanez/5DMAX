@@ -10,6 +10,12 @@
             --glow-orange: #ff5500;
             --glow-blue: #6366f1;
             --bg-dark: #0a0c10;
+            
+            /* 🌟 Индивидуальная подгонка высоты для каждого игрока */
+            --pos-Magistr333: center 18%;  /* Спускает фото Magistr, открывая логотип */
+            --pos-DZAGAA: center center;   /* DZAGAA оставляем как есть, у него всё ок */
+            --pos-Sazanchiks: center 12%;  /* Сильнее спускает фото Sazan */
+            --pos-ArtemLob1: center 22%;   /* Спускает фото Artem */
         }
 
         * {
@@ -161,7 +167,6 @@
 
         .avatar-img {
             width: 100%; height: 100%; object-fit: cover;
-            object-position: top; /* 🌟 Вот эта строчка опустит лица ниже */
             transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
         }
         .tilt-card:hover .avatar-img { transform: scale(1.08); }
@@ -257,7 +262,6 @@
         }
         .kd-godlike { color: #4ade80; border-color: rgba(74, 222, 128, 0.3); background: rgba(74, 222, 128, 0.05); text-shadow: 0 0 5px rgba(74, 222, 128, 0.3); }
 
-        /* Стилизация блока «Последние результаты» */
         .history-container {
             display: flex;
             gap: 6px;
@@ -350,7 +354,6 @@
                     const segData = await segRes.json();
                     
                     matches = segData.lifetime["Matches"] || "—";
-                    // Достаем массив последних игр (там лежат значения "1" и "0")
                     recentResults = segData.lifetime["Recent Results"] || [];
                     
                     const avgKd = parseFloat(segData.lifetime["Average K/D Ratio"]) || 0;
@@ -379,16 +382,11 @@
             img.parentElement.innerHTML = `<div class="avatar-placeholder">${name.charAt(0)}</div>`;
         }
 
-        // Вспомогательная функция для генерации W/L индикаторов формы (берём последние 5 матчей)
         function generateHistoryHtml(resultsArray) {
             if (!resultsArray || resultsArray.length === 0) {
-                // Заглушка, если профиль пуст
                 return `<span class="history-letter hl-win">W</span><span class="history-letter hl-loss">L</span><span class="history-letter hl-loss">L</span><span class="history-letter hl-win">W</span><span class="history-letter hl-win">W</span>`;
             }
-            
-            // Забираем ровно последние 5 игр (FACEIT возвращает массив, где новые игры в конце или в начале, берем срез первых 5)
             const lastFive = resultsArray.slice(0, 5);
-            
             return lastFive.map(res => {
                 if (res === "1" || res === 1) {
                     return `<span class="history-letter hl-win">W</span>`;
@@ -418,8 +416,9 @@
                     countElo++;
                 }
 
+                /* 🌟 Применяем инлайновое CSS-переменное свойство для точечной центровки лиц и логотипов */
                 const avatarHtml = p.photo 
-                    ? `<img src="${p.photo}" class="avatar-img" alt="${p.nickname}" onerror="handleImgError(this, '${p.nickname}')">`
+                    ? `<img src="${p.photo}" class="avatar-img" alt="${p.nickname}" style="object-position: var(--pos-${p.nickname}, center);" onerror="handleImgError(this, '${p.nickname}')">`
                     : `<div class="avatar-placeholder">${p.nickname.charAt(0)}</div>`;
                 
                 const kd = (data && data.stats.kd !== "—") ? data.stats.kd : "1.09"; 
@@ -455,7 +454,6 @@
                                 <div class="stat-row-premium"><span>K/D</span><span class="${kdClass}">${kd}</span></div>
                                 <div class="stat-row-premium"><span>Total Matches</span><span class="value-premium">${mCount}</span></div>
                                 
-                                <!-- Новый блок с W/L индикаторами как на скрине -->
                                 <div class="stat-row-premium">
                                     <span>ПОСЛЕДНИЕ РЕЗУЛЬТАТЫ</span>
                                     <div class="history-container">

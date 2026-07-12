@@ -282,7 +282,7 @@
             border: 2px dashed rgba(74, 222, 128, 0.2);
             background: rgba(74, 222, 128, 0.02);
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            min-height: 350px;
+            min-height: 480px;
         }
         .searching-node:hover {
             border-color: #4ade80;
@@ -330,7 +330,6 @@
     <script>
         const API_KEY = "db82dc3b-da7c-49ed-a80a-f7c2880b623e";
         
-        // 🛠 СЮДА ПРОПИСЫВАЙ НАЗВАНИЯ СВОИХ ФАЙЛОВ КАРТИНОК
         const players = [
             { nickname: "Magistr333", role: "IGL", defaultLvl: 8, defaultElo: 1637, defaultHs: "48%", photo: "magistr.png" },
             { nickname: "DZAGAA", role: "AWP", defaultLvl: 9, defaultElo: 1898, defaultHs: "38%", photo: "dzaga.png" },
@@ -417,6 +416,11 @@
             }
         }
 
+        function handleImgError(img, name) {
+            img.onerror = null;
+            img.parentElement.innerHTML = `<div class="avatar-placeholder">${name.charAt(0)}</div>`;
+        }
+
         async function buildLineup() {
             const lineupDiv = document.getElementById("lineup");
             let html = "";
@@ -437,9 +441,8 @@
                     countElo++;
                 }
 
-                // Логика отображения твоих собственных фото вместо FACEIT
                 const avatarHtml = p.photo 
-                    ? `<img src="${p.photo}" class="avatar-img" alt="${p.nickname}" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\"avatar-placeholder\">${p.nickname.charAt(0)}</div>';">`
+                    ? `<img src="${p.photo}" class="avatar-img" alt="${p.nickname}" onerror="handleImgError(this, '${p.nickname}')">`
                     : `<div class="avatar-placeholder">${p.nickname.charAt(0)}</div>`;
                 
                 const kd = data ? data.stats.kd : "1.09"; 

@@ -43,7 +43,7 @@
             pointer-events: none;
         }
 
-        /* Бегущие Sci-Fi линии на фоне */
+        /* Бегущие Sci-Fi lines */
         .bg-lines {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -74,14 +74,12 @@
             z-index: 1;
         }
 
-        /* Угловые декоративные элементы в стиле Sci-Fi */
         .hud-terminal::before, .hud-terminal::after {
             content: ""; position: absolute; width: 20px; height: 20px; border-color: var(--glow-red); border-style: solid; pointer-events: none;
         }
         .hud-terminal::before { top: -2px; left: -2px; border-width: 3px 0 0 3px; border-top-left-radius: 20px; }
         .hud-terminal::after { bottom: -2px; right: -2px; border-width: 0 3px 3px 0; border-bottom-right-radius: 20px; }
 
-        /* Верхняя панель управления и инфографика */
         .hud-header {
             display: flex;
             justify-content: space-between;
@@ -121,14 +119,12 @@
         .meta-label { font-size: 11px; color: #64748b; text-transform: uppercase; }
         .meta-val { font-size: 18px; font-weight: bold; color: #fff; margin-top: 2px; }
 
-        /* Сетка состава */
         .roster-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
             gap: 25px;
         }
 
-        /* Карточка игрока */
         .tilt-card {
             background: linear-gradient(135deg, rgba(20, 26, 38, 0.8) 0%, rgba(13, 17, 24, 0.9) 100%);
             border: 1px solid rgba(255, 255, 255, 0.04);
@@ -146,17 +142,14 @@
             height: 100%;
         }
 
-        /* Эффект наведения */
         .tilt-card:hover {
             transform: translateY(-7px) scale(1.03);
         }
 
-        /* Индивидуальные эффекты подсветок уровней */
         .card-lvl-10:hover { border-color: rgba(255, 26, 0, 0.6); box-shadow: 0 0 35px rgba(255, 26, 0, 0.3); }
         .card-lvl-9:hover { border-color: rgba(255, 102, 0, 0.4); box-shadow: 0 0 35px rgba(255, 102, 0, 0.18); }
         .card-lvl-8:hover { border-color: rgba(255, 85, 0, 0.5); box-shadow: 0 0 35px rgba(255, 85, 0, 0.25); }
 
-        /* Аватар */
         .avatar-frame {
             width: 100%;
             aspect-ratio: 1/1;
@@ -176,7 +169,6 @@
         .tilt-card:hover .avatar-img { transform: scale(1.08); }
         .avatar-placeholder { font-size: 64px; color: #1e293b; font-weight: 900; }
 
-        /* Уровни FACEIT */
         .level-badge-3d {
             position: absolute; top: 12px; right: 12px;
             width: 34px; height: 34px;
@@ -197,7 +189,6 @@
             100% { box-shadow: 0 0 25px var(--glow-red), 0 4px 15px rgba(255, 26, 0, 0.6); }
         }
 
-        /* Информационный блок игрока */
         .info-frame {
             padding: 20px 18px;
             background: rgba(7, 9, 14, 0.4);
@@ -205,7 +196,6 @@
 
         .p-nick { font-size: 21px; font-weight: 900; color: #fff; letter-spacing: 1px; text-transform: uppercase; }
         
-        /* Прокачанные роли игроков (Строгий единый стиль) */
         .p-position { 
             display: inline-block;
             font-size: 11px; 
@@ -220,7 +210,6 @@
             background: rgba(56, 189, 248, 0.05);
         }
 
-        /* Блок детальной статистики */
         .stats-frame {
             padding: 18px;
             display: flex;
@@ -230,7 +219,6 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
-        /* Премиальный блок ELO */
         .elo-premium-block {
             background: linear-gradient(90deg, rgba(99, 102, 241, 0.08) 0%, rgba(79, 70, 229, 0.02) 100%);
             border: 1px solid rgba(99, 102, 241, 0.2);
@@ -250,7 +238,6 @@
         .elo-main-label { font-size: 11px; color: #6366f1; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; }
         .elo-sub-label { font-size: 8px; color: #475569; letter-spacing: 0.5px; text-transform: uppercase; }
         
-        /* Стилизация цифр ELO под цвет уровня */
         .elo-value { font-size: 20px; font-weight: 900; font-family: 'Courier New', monospace; }
         .num-lvl-10 { color: #ff1a00; text-shadow: 0 0 10px rgba(255, 26, 0, 0.4); }
         .num-lvl-9 { color: #ff6600; text-shadow: 0 0 10px rgba(255, 102, 0, 0.3); }
@@ -266,18 +253,15 @@
 
         .value-premium { color: #fff; font-weight: bold; font-size: 14px; }
 
-        /* Специальный HUD-тег K/D */
         .kd-hud-tag {
             padding: 4px 12px; border-radius: 5px; font-weight: 900; font-size: 13px;
             background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
         }
         .kd-godlike { color: #4ade80; border-color: rgba(74, 222, 128, 0.3); background: rgba(74, 222, 128, 0.05); text-shadow: 0 0 5px rgba(74, 222, 128, 0.3); }
 
-        /* Прогресс бары */
         .bar-bg { width: 100%; height: 6px; background: rgba(255,255,255,0.03); border-radius: 3px; margin-top: 6px; overflow: hidden; border: 1px solid rgba(255,255,255,0.02); }
         .bar-fill { height: 100%; background: linear-gradient(90deg, #818cf8, #4f46e5); border-radius: 3px; width: 0%; transition: width 1s ease-out; }
 
-        /* Поиск 5-го игрока */
         .searching-node {
             border: 2px dashed rgba(74, 222, 128, 0.2);
             background: rgba(74, 222, 128, 0.02);
@@ -346,59 +330,42 @@
                 const pData = await pRes.json();
                 const playerId = pData.player_id;
 
-                // Получаем историю игр (до 50 штук с запасом, чтобы отфильтровать ровно 30 завершенных)
-                const hRes = await fetch(`https://open.faceit.com/data/v4/players/${playerId}/history?game=cs2&limit=50`, {
+                let kd = "—"; let winRate = "—"; let hs = "—";
+                
+                // Стучимся в детальный блок CS2
+                const segRes = await fetch(`https://open.faceit.com/data/v4/players/${playerId}/stats/cs2`, {
                     headers: { 'Authorization': `Bearer ${API_KEY}` }
                 });
                 
-                let kd = "—"; let winRate = "—"; let hs = "—";
-                
-                if (hRes.ok) {
-                    const hData = await hRes.json();
+                if (segRes.ok) {
+                    const segData = await segRes.json();
                     
-                    if (hData.items && hData.items.length > 0) {
-                        // Фильтруем только полноценно завершенные матчи
-                        const finishedMatches = hData.items.filter(m => m.status === "FINISHED").slice(0, 30);
-                        
-                        let wins = 0;
-                        let validMatchesCount = finishedMatches.length;
+                    // 1. Извлекаем чистый процент побед из статистики самого профиля (без сбоев истории)
+                    if (segData.lifetime["Win Rate %"]) {
+                        winRate = segData.lifetime["Win Rate %"] + "%";
+                    } else if (segData.lifetime["Recent Results"]) {
+                        const recentResults = segData.lifetime["Recent Results"];
+                        const recentWins = recentResults.filter(r => r === "1" || r === 1).length;
+                        winRate = Math.round((recentWins / recentResults.length) * 100) + "%";
+                    }
 
-                        finishedMatches.forEach(match => {
-                            const playerTeam = match.results?.teams?.find(t => 
-                                t.players?.some(p => p.player_id === playerId)
-                            );
-                            if (playerTeam && playerTeam.winner) {
-                                wins++;
-                            }
-                        });
-
-                        // Точный расчет процента побед по сыгранным матчам
-                        if (validMatchesCount > 0) {
-                            winRate = Math.round((wins / validMatchesCount) * 100) + "%";
+                    // 2. Вытягиваем абсолютно точный процент хэдшотов с Faceit (без округлений)
+                    if (segData.lifetime["Average Headshots %"]) {
+                        hs = segData.lifetime["Average Headshots %"] + "%";
+                    }
+                    
+                    // 3. Расчет боевого K/D
+                    const avgKd = parseFloat(segData.lifetime["Average K/D Ratio"]) || 0;
+                    const recentResults = segData.lifetime["Recent Results"] || [];
+                    if (recentResults.length > 0) {
+                        const winFactor = (recentResults.filter(r => r === "1" || r === 1).length) / recentResults.length;
+                        if (winFactor < 0.4) {
+                            kd = (avgKd * 0.85).toFixed(2);
+                        } else {
+                            kd = avgKd.toFixed(2);
                         }
-
-                        const segRes = await fetch(`https://open.faceit.com/data/v4/players/${playerId}/stats/cs2`, {
-                            headers: { 'Authorization': `Bearer ${API_KEY}` }
-                        });
-                        
-                        if (segRes.ok) {
-                            const segData = await segRes.json();
-                            const recentResults = segData.lifetime["Recent Results"] || [];
-                            const avgKd = parseFloat(segData.lifetime["Average K/D Ratio"]) || 0;
-                            
-                            if (recentResults.length > 0) {
-                                const winFactor = (recentResults.filter(r => r === "1").length) / recentResults.length;
-                                if (winFactor < 0.4) {
-                                    kd = (avgKd * 0.85).toFixed(2);
-                                } else {
-                                    kd = avgKd.toFixed(2);
-                                }
-                            } else {
-                                kd = avgKd.toFixed(2);
-                            }
-                            
-                            hs = segData.lifetime["Average Headshots %"] ? segData.lifetime["Average Headshots %"] + "%" : "—";
-                        }
+                    } else {
+                        kd = avgKd.toFixed(2);
                     }
                 }
                 
@@ -446,8 +413,10 @@
                 const kd = data ? data.stats.kd : "1.09"; 
                 const hsStr = data ? data.stats.hs : p.defaultHs;
                 const wrStr = data ? data.stats.winRate : "54%";
-                const hsNum = parseInt(hsStr) || 0;
-                const wrNum = parseInt(wrStr) || 0;
+                
+                // Используем parseFloat, чтобы полоски прогресса учитывали дробные значения до сотых
+                const hsNum = parseFloat(hsStr) || 0;
+                const wrNum = parseFloat(wrStr) || 0;
 
                 let lvlClass = 'l-8'; let cardLvlClass = 'card-lvl-8'; let eloNumClass = 'num-lvl-8';
                 if (finalLvl == 10) { lvlClass = 'l-10'; cardLvlClass = 'card-lvl-10'; eloNumClass = 'num-lvl-10'; }
@@ -502,7 +471,8 @@
             lineupDiv.innerHTML = html;
 
             if (countElo > 0) {
-                document.getElementById("avg-elo").innerText = Math.round(totalElo / countElo);
+                // Выводим среднее ELO с идеальной точностью до десятых долей
+                document.getElementById("avg-elo").innerText = (totalElo / countElo).toFixed(1);
             }
         }
 

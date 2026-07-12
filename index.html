@@ -330,16 +330,16 @@
     <script>
         const API_KEY = "db82dc3b-da7c-49ed-a80a-f7c2880b623e";
         
+        // 🛠 СЮДА ПРОПИСЫВАЙ НАЗВАНИЯ СВОИХ ФАЙЛОВ КАРТИНОК
         const players = [
-            { nickname: "Magistr333", role: "IGL", defaultLvl: 8, defaultElo: 1637, defaultHs: "48%" },
-            { nickname: "DZAGAA", role: "AWP", defaultLvl: 9, defaultElo: 1898, defaultHs: "38%" },
-            { nickname: "Sazanchiks", role: "Rifler", defaultLvl: 10, defaultElo: 2012, defaultHs: "52%" },
-            { nickname: "ArtemLob1", role: "Rifler", defaultLvl: 8, defaultElo: 1532, defaultHs: "46%" }
+            { nickname: "Magistr333", role: "IGL", defaultLvl: 8, defaultElo: 1637, defaultHs: "48%", photo: "magistr.png" },
+            { nickname: "DZAGAA", role: "AWP", defaultLvl: 9, defaultElo: 1898, defaultHs: "38%", photo: "dzaga.png" },
+            { nickname: "Sazanchiks", role: "Rifler", defaultLvl: 10, defaultElo: 2012, defaultHs: "52%", photo: "sazan.png" },
+            { nickname: "ArtemLob1", role: "Rifler", defaultLvl: 8, defaultElo: 1532, defaultHs: "46%", photo: "artem.png" }
         ];
 
         async function fetchPlayerData(nickname) {
             try {
-                // 1. Получаем ID игрока по никнейму
                 const pRes = await fetch(`https://open.faceit.com/data/v4/players?nickname=${nickname}`, {
                     headers: { 'Authorization': `Bearer ${API_KEY}` }
                 });
@@ -347,7 +347,6 @@
                 const pData = await pRes.json();
                 const playerId = pData.player_id;
 
-                // 2. Получаем последние 30 игр одной пачкой
                 const hRes = await fetch(`https://open.faceit.com/data/v4/players/${playerId}/history?game=cs2&limit=30`, {
                     headers: { 'Authorization': `Bearer ${API_KEY}` }
                 });
@@ -408,7 +407,6 @@
                 
                 return {
                     nickname: pData.nickname,
-                    avatar: pData.avatar || "",
                     lvl: pData.games.cs2?.skill_level || pData.games.csgo?.skill_level || "—",
                     elo: pData.games.cs2?.faceit_elo || pData.games.csgo?.faceit_elo || "—",
                     stats: { kd, hs, winRate }
@@ -439,8 +437,9 @@
                     countElo++;
                 }
 
-                const avatarHtml = (data && data.avatar) 
-                    ? `<img src="${data.avatar}" class="avatar-img" alt="${p.nickname}">`
+                // Логика отображения твоих собственных фото вместо FACEIT
+                const avatarHtml = p.photo 
+                    ? `<img src="${p.photo}" class="avatar-img" alt="${p.nickname}" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\"avatar-placeholder\">${p.nickname.charAt(0)}</div>';">`
                     : `<div class="avatar-placeholder">${p.nickname.charAt(0)}</div>`;
                 
                 const kd = data ? data.stats.kd : "1.09"; 
@@ -467,7 +466,6 @@
                                 <div class="p-position">${p.role}</div>
                             </div>
                             <div class="stats-frame">
-                                <!-- Премиальный блок ELO с цветной цифрой -->
                                 <div class="elo-premium-block">
                                     <div class="elo-label-group">
                                         <span class="elo-main-label">ELO RATING</span>

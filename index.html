@@ -5,39 +5,164 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>5DMAX Team Profile</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #1b1f26; color: #d3d7db; margin: 0; padding: 20px; display: flex; justify-content: center; }
-        .hltv-container { width: 100%; max-width: 950px; background-color: #232a36; border: 1px solid #323d4f; border-radius: 4px; overflow: hidden; }
-        
-        .team-header { background-color: #2d3848; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #38465a; }
-        .team-info { display: flex; align-items: center; gap: 10px; }
-        .team-name { color: #ffffff; font-weight: bold; font-size: 18px; text-transform: uppercase; }
-        .world-rank { color: #8a96a8; font-size: 14px; }
-        .world-rank strong { color: #ffffff; }
+        /* Анимированный футуристичный фон */
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            background: linear-gradient(135deg, #0f1115 0%, #161920 50%, #0d0e12 100%);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: #d3d7db; 
+            margin: 0; 
+            padding: 40px 20px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            min-height: 90vh;
+        }
 
-        .lineup-grid { display: grid; grid-template-columns: repeat(5, 1fr); background-color: #1d232c; padding: 10px; gap: 8px; }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Контейнер в стиле Glassmorphism */
+        .hltv-container { 
+            width: 100%; 
+            max-width: 1000px; 
+            background: rgba(35, 42, 54, 0.3); 
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05); 
+            border-radius: 12px; 
+            overflow: hidden; 
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+        }
         
-        .player-card { background-color: #232a36; border: 1px solid #2d3848; border-radius: 2px; overflow: hidden; display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; }
+        /* Шапка команды */
+        .team-header { 
+            background: rgba(45, 56, 72, 0.4); 
+            padding: 20px 25px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05); 
+        }
+        .team-name { 
+            color: #ffffff; 
+            font-weight: 900; 
+            font-size: 22px; 
+            text-transform: uppercase; 
+            letter-spacing: 1.5px;
+            background: linear-gradient(45deg, #fff, #a5b4fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Сетка */
+        .lineup-grid { 
+            display: grid; 
+            grid-template-columns: repeat(5, 1fr); 
+            background: rgba(20, 26, 35, 0.2); 
+            padding: 20px; 
+            gap: 15px; 
+        }
+        
+        /* Интерактивная карточка игрока */
+        .player-card { 
+            background: rgba(30, 37, 49, 0.45); 
+            border: 1px solid rgba(255, 255, 255, 0.03); 
+            border-radius: 8px; 
+            overflow: hidden; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            text-align: center; 
+            position: relative; 
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            transform: translateY(0);
+        }
         .player-link { text-decoration: none; color: inherit; width: 100%; display: flex; flex-direction: column; align-items: center; }
         
-        .avatar-container { width: 100%; aspect-ratio: 1/1; background-color: #181c22; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        .player-avatar { width: 100%; height: 100%; object-fit: cover; }
-        .no-avatar { font-size: 40px; color: #38465a; font-weight: bold; text-transform: uppercase; }
+        /* Эффект наведения (Hover) */
+        .player-card:hover {
+            transform: translateY(-8px);
+            background: rgba(35, 45, 60, 0.6);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
 
-        .player-meta { padding: 8px 5px; width: 100%; box-sizing: border-box; background: #262e3c; border-bottom: 1px solid #323d4f; }
-        .player-name { color: #ffffff; font-weight: bold; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .player-role { color: #8a96a8; font-size: 11px; margin-top: 2px; }
+        /* Специфический неон под уровни FACEIT */
+        .card-lvl-10:hover { box-shadow: 0 10px 30px rgba(255, 85, 0, 0.35); }
+        .card-lvl-9:hover { box-shadow: 0 10px 30px rgba(255, 102, 0, 0.25); }
+        .card-lvl-8:hover { box-shadow: 0 10px 30px rgba(255, 136, 0, 0.2); }
 
-        .player-stats { padding: 8px; width: 100%; box-sizing: border-box; font-size: 11px; display: flex; flex-direction: column; gap: 5px; background-color: #1f2631; }
+        /* Фото игрока и зум */
+        .avatar-container { 
+            width: 100%; 
+            aspect-ratio: 1/1; 
+            background-color: rgba(15, 18, 24, 0.5); 
+            position: relative; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            overflow: hidden; 
+        }
+        .player-avatar { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            transition: transform 0.4s ease;
+        }
+        .player-card:hover .player-avatar {
+            transform: scale(1.08);
+        }
+        .no-avatar { font-size: 46px; color: #2d3848; font-weight: bold; text-transform: uppercase; }
+
+        /* Мета */
+        .player-meta { padding: 12px 5px; width: 100%; box-sizing: border-box; background: rgba(38, 46, 60, 0.5); border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        .player-name { color: #ffffff; font-weight: bold; font-size: 15px; }
+        .player-role { color: #8a96a8; font-size: 11px; margin-top: 3px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* Статистика */
+        .player-stats { padding: 12px 10px; width: 100%; box-sizing: border-box; font-size: 12px; display: flex; flex-direction: column; gap: 6px; background: rgba(25, 30, 39, 0.3); }
         .stat-row { display: flex; justify-content: space-between; color: #8a96a8; }
         .stat-value { color: #ffffff; font-weight: bold; }
 
-        .lvl-badge { position: absolute; top: 5px; right: 5px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff; border-radius: 3px; font-size: 11px; font-family: sans-serif; z-index: 2; }
-        .lvl-10 { background-color: #ff5500; box-shadow: 0 0 5px #ff5500; }
-        .lvl-9 { background-color: #ff5500; border-left: 3px solid #fff; }
-        .lvl-8 { background-color: #ff5500; opacity: 0.9; }
+        /* Кастомные плашки уровней */
+        .lvl-badge { 
+            position: absolute; top: 8px; right: 8px; width: 26px; height: 26px; 
+            display: flex; align-items: center; justify-content: center; 
+            font-weight: 900; color: #fff; border-radius: 4px; font-size: 12px; z-index: 2; 
+        }
+        .lvl-10 { background: #ff5500; box-shadow: 0 0 10px #ff5500; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+        .lvl-9 { background: #ff6600; box-shadow: 0 0 5px rgba(255, 102, 0, 0.5); }
+        .lvl-8 { background: #ff8800; }
 
-        .searching-card { border: 1px dashed #4b5563; background: repeating-linear-gradient(45deg, #1d232c, #1d232c 10px, #232a36 10px, #232a36 20px); justify-content: center; min-height: 220px; }
-        .searching-text { color: #5ba62c; font-weight: bold; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; padding: 20px 10px; }
+        /* Новая неоновая карточка "В поиске" */
+        .searching-card { 
+            border: 1px dashed rgba(91, 166, 44, 0.4); 
+            background: rgba(20, 30, 20, 0.2); 
+            justify-content: center; 
+            min-height: 250px; 
+        }
+        .searching-card:hover {
+            border-color: #5ba62c;
+            box-shadow: 0 10px 35px rgba(91, 166, 44, 0.25);
+            background: rgba(20, 35, 20, 0.35);
+        }
+        .searching-text { 
+            color: #5ba62c; 
+            font-weight: 900; 
+            font-size: 15px; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            padding: 10px;
+            animation: pulseNeon 2s infinite alternate;
+        }
+        @keyframes pulseNeon {
+            0% { text-shadow: 0 0 5px rgba(91, 166, 44, 0.5); }
+            100% { text-shadow: 0 0 15px rgba(91, 166, 44, 1), 0 0 20px rgba(91, 166, 44, 0.4); }
+        }
     </style>
 </head>
 <body>
@@ -50,7 +175,7 @@
         </div>
 
         <div class="lineup-grid" id="lineup">
-            <div style="color: #8a96a8; padding: 20px; grid-column: span 5; text-align: center;">Загрузка актуальной статистики...</div>
+            <div style="color: #8a96a8; padding: 30px; grid-column: span 5; text-align: center; font-size: 14px; letter-spacing: 1px;">Загрузка актуальной статистики аимеров...</div>
         </div>
     </div>
 
@@ -66,7 +191,6 @@
 
         async function fetchPlayerData(nickname) {
             try {
-                // 1. Профиль игрока
                 const pRes = await fetch(`https://open.faceit.com/data/v4/players?nickname=${nickname}`, {
                     headers: { 'Authorization': `Bearer ${API_KEY}` }
                 });
@@ -74,7 +198,6 @@
                 const pData = await pRes.json();
                 const playerId = pData.player_id;
 
-                // 2. Статистика (K/D, Win Rate, Headshots %)
                 const sRes = await fetch(`https://open.faceit.com/data/v4/players/${playerId}/stats/cs2`, {
                     headers: { 'Authorization': `Bearer ${API_KEY}` }
                 });
@@ -123,11 +246,17 @@
                 const wr = data ? data.stats.winRate : "54%";
 
                 let lvlClass = 'lvl-8';
-                if (finalLvl == 10) lvlClass = 'lvl-10';
-                else if (finalLvl == 9) lvlClass = 'lvl-9';
+                let cardLvlClass = 'card-lvl-8';
+                if (finalLvl == 10) {
+                    lvlClass = 'lvl-10';
+                    cardLvlClass = 'card-lvl-10';
+                } else if (finalLvl == 9) {
+                    lvlClass = 'lvl-9';
+                    cardLvlClass = 'card-lvl-9';
+                }
 
                 html += `
-                    <div class="player-card">
+                    <div class="player-card ${cardLvlClass}">
                         <a href="https://www.faceit.com/ru/players/${p.nickname}" target="_blank" class="player-link">
                             <div class="lvl-badge ${lvlClass}">${finalLvl}</div>
                             <div class="avatar-container">
@@ -138,7 +267,7 @@
                                 <div class="player-role">${p.role}</div>
                             </div>
                             <div class="player-stats">
-                                <div class="stat-row"><span>ELO</span><span class="stat-value">${finalElo}</span></div>
+                                <div class="stat-row"><span>ELO</span><span class="stat-value" style="color: #a5b4fc">${finalElo}</span></div>
                                 <div class="stat-row"><span>K/D Ratio</span><span class="stat-value" style="color: ${kd >= 1 ? '#5ba62c' : '#ef4444'}">${kd}</span></div>
                                 <div class="stat-row"><span>Headshots</span><span class="stat-value">${hs}</span></div>
                                 <div class="stat-row"><span>Win Rate</span><span class="stat-value">${wr}</span></div>
@@ -151,7 +280,7 @@
             html += `
                 <div class="player-card searching-card">
                     <div class="searching-text">В поиске</div>
-                    <div class="player-role" style="color: #8a96a8; font-style: italic; padding-bottom: 10px;">5th player</div>
+                    <div class="player-role" style="color: #8a96a8; font-style: italic;">5th player</div>
                 </div>
             `;
 

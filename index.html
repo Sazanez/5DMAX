@@ -62,7 +62,7 @@
         /* Главный командный терминал */
         .hud-terminal {
             width: 100%;
-            max-width: 1400px; /* Увеличили общую ширину контейнера под большие карточки */
+            max-width: 1400px;
             background: rgba(10, 14, 22, 0.6);
             border: 2px solid rgba(255, 255, 255, 0.05);
             border-radius: 20px;
@@ -101,7 +101,7 @@
             font-weight: 900;
             letter-spacing: 5px;
             color: #fff;
-            text-shadow: 0 0 15px rgba(239, 68, 68, 0.6);
+            text-shadow: 0 0 15px rgba(255, 26, 0, 0.6);
             animation: textGlitch 4s infinite;
         }
 
@@ -121,14 +121,14 @@
         .meta-label { font-size: 11px; color: #64748b; text-transform: uppercase; }
         .meta-val { font-size: 18px; font-weight: bold; color: #fff; margin-top: 2px; }
 
-        /* Сетка состава (карточки стали шире) */
+        /* Сетка состава */
         .roster-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
             gap: 25px;
         }
 
-        /* Карточка игрока (Статичная, увеличен размер) */
+        /* Карточка игрока */
         .tilt-card {
             background: linear-gradient(135deg, rgba(20, 26, 38, 0.8) 0%, rgba(13, 17, 24, 0.9) 100%);
             border: 1px solid rgba(255, 255, 255, 0.04);
@@ -150,17 +150,12 @@
         .tilt-card:hover {
             transform: translateY(-7px) scale(1.03);
         }
-        }
-        .tilt-card:hover::after {
-            animation: laserScan 1.5s linear infinite;
-            opacity: 1;
-        }
 
         /* Индивидуальные эффекты подсветок уровней */
         .card-lvl-10:hover { border-color: rgba(255, 26, 0, 0.6); box-shadow: 0 0 35px rgba(255, 26, 0, 0.3); }
         .card-lvl-9:hover { border-color: rgba(255, 102, 0, 0.4); box-shadow: 0 0 35px rgba(255, 102, 0, 0.18); }
         .card-lvl-8:hover { border-color: rgba(255, 85, 0, 0.5); box-shadow: 0 0 35px rgba(255, 85, 0, 0.25); }
-        
+
         /* Аватар */
         .avatar-frame {
             width: 100%;
@@ -189,16 +184,20 @@
             font-weight: 900; color: #fff; border-radius: 8px; font-size: 15px;
             z-index: 10;
         }
-        .l-10 { background: var(--glow-red); box-shadow: 0 0 15px var(--glow-red), 0 4px 10px rgba(0,0,0,0.5); animation: pulseGlow 1.5s infinite alternate; }
-        .l-9 { background: var(--glow-orange); box-shadow: 0 0 10px var(--glow-orange); }
+        .l-10 { 
+            background: var(--glow-red); 
+            box-shadow: 0 0 15px var(--glow-red), 0 4px 10px rgba(0,0,0,0.5); 
+            animation: pulseGlow 1.5s infinite alternate; 
+        }
+        .l-9 { background: #ff6600; box-shadow: 0 0 10px rgba(255, 102, 0, 0.5); }
         .l-8 { background: var(--glow-orange); box-shadow: 0 0 10px rgba(255, 85, 0, 0.5); }
 
         @keyframes pulseGlow {
             0% { box-shadow: 0 0 8px var(--glow-red); }
-            100% { box-shadow: 0 0 20px var(--glow-red), 0 4px 15px rgba(239, 68, 68, 0.4); }
+            100% { box-shadow: 0 0 25px var(--glow-red), 0 4px 15px rgba(255, 26, 0, 0.6); }
         }
 
-        /* Информационный блок игрока (Увеличены шрифты) */
+        /* Информационный блок игрока */
         .info-frame {
             padding: 20px 18px;
             background: rgba(7, 9, 14, 0.4);
@@ -207,14 +206,13 @@
         .p-nick { font-size: 21px; font-weight: 900; color: #fff; letter-spacing: 1px; text-transform: uppercase; }
         .p-position { font-size: 12px; color: #94a3b8; text-transform: uppercase; margin-top: 5px; letter-spacing: 2px; font-weight: bold; }
 
-        /* Блок детальной статистики (Увеличены отступы и размеры) */
+        /* Блок детальной статистики */
         .stats-frame {
             padding: 18px;
             display: flex;
             flex-direction: column;
             gap: 15px;
             background: rgba(5, 7, 10, 0.6);
-            /* Применяем sans-serif для чистых цифр и знака % */
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
@@ -334,18 +332,18 @@
                             
                             if (mRes.ok) {
                                 const mData = await mRes.json();
-                                // Ищемстатистику нашего игрока в этом матче
-                                const team = mData.rounds[0].teams.find(t => 
-                                    t.players.some(p => p.player_id === playerId)
-                                );
-                                if (team) {
-                                    const pStats = team.players.find(p => p.player_id === playerId);
-                                    if (pStats) {
-                                        totalKd += parseFloat(pStats.player_stats["K/D Ratio"]) || 0;
-                                        totalHs += parseFloat(pStats.player_stats["Headshots %"]) || 0;
-                                        // Проверяем, победила ли команда игрока
-                                        if (team.team_stats["Team Win"] === "1") wins++;
-                                        matchCount++;
+                                if (mData.rounds && mData.rounds[0]) {
+                                    const team = mData.rounds[0].teams.find(t => 
+                                        t.players.some(p => p.player_id === playerId)
+                                    );
+                                    if (team) {
+                                        const pStats = team.players.find(p => p.player_id === playerId);
+                                        if (pStats) {
+                                            totalKd += parseFloat(pStats.player_stats["K/D Ratio"]) || 0;
+                                            totalHs += parseFloat(pStats.player_stats["Headshots %"]) || 0;
+                                            if (team.team_stats["Team Win"] === "1") wins++;
+                                            matchCount++;
+                                        }
                                     }
                                 }
                             }
@@ -452,11 +450,7 @@
             }
         }
 
-fetchPlayerData
-            html += `
-                <div class="tilt-card searching-node">
-                    <div class="search-glitch">В поиске</div>
-              
+        buildLineup();
     </script>
 </body>
 </html>

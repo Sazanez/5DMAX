@@ -323,6 +323,7 @@
 
         async function fetchPlayerData(nickname) {
             try {
+                // 1. Получаем ID игрока по никнейму
                 const pRes = await fetch(`https://open.faceit.com/data/v4/players?nickname=${nickname}`, {
                     headers: { 'Authorization': `Bearer ${API_KEY}` }
                 });
@@ -330,42 +331,72 @@
                 const pData = await pRes.json();
                 const playerId = pData.player_id;
 
+                // 2. Запрашиваем историю матчей с запасом (до 60 штук), чтобы выудить ровно 30 чистых CS2 игр
+                const hRes = await fetch(`https://open.faceit.com/data/v4/players/${playerId}/history?game=cs2&limit=60`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
+                
                 let kd = "—"; let winRate = "—"; let hs = "—";
                 
+                // Запрашиваем базовый статистический блок для K/D трендов
                 const segRes = await fetch(`https://open.faceit.com/data/v4/players/${playerId}/stats/cs2`, {
                     headers: { 'Authorization': `Bearer ${API_KEY}` }
                 });
                 
+                let avgKd = 1.0;
+                let recentResults = [];
                 if (segRes.ok) {
                     const segData = await segRes.json();
-                    
-                    // 1. Извлекаем чистый процент побед
-                    if (segData.lifetime["Win Rate %"]) {
-                        winRate = segData.lifetime["Win Rate %"] + "%";
-                    } else if (segData.lifetime["Recent Results"]) {
-                        const recentResults = segData.lifetime["Recent Results"];
-                        const recentWins = recentResults.filter(r => r === "1" || r === 1).length;
-                        winRate = Math.round((recentWins / recentResults.length) * 100) + "%";
-                    }
+                    avgKd = parseFloat(segData.lifetime["Average K/D Ratio"]) || 1.0;
+                    recentResults = segData.lifetime["Recent Results"] || [];
+                }
 
-                    // 2. Вытягиваем процент хэдшотов
-                    if (segData.lifetime["Average Headshots %"]) {
-                        hs = segData.lifetime["Average Headshots %"] + "%";
-                    }
-                    
-                    // 3. Расчет боевого K/D
-                    const avgKd = parseFloat(segData.lifetime["Average K/D Ratio"]) || 0;
-                    const recentResults = segData.lifetime["Recent Results"] || [];
-                    if (recentResults.length > 0) {
-                        const winFactor = (recentResults.filter(r => r === "1" || r === 1).length) / recentResults.length;
-                        if (winFactor < 0.4) {
-                            kd = (avgKd * 0.85).toFixed(2);
-                        } else {
-                            kd = avgKd.toFixed(2);
+                if (hRes.ok) {
+                    const hData = await hRes.json();
+                    if (hData.items && hData.items.length > 0) {
+                        // Фильтруем строго завершенные матчи
+                        const matches = hData.items.filter(m => m.status === "FINISHED").slice(0, 30);
+                        let matchCount = matches.length;
+                        let wins = 0;
+                        let totalHsPct = 0;
+                        let hsCount = 0;
+
+                        matches.forEach(match => {
+                            // Проверяем победу в данном матче
+                            const playerTeam = match.results?.teams?.find(t => 
+                                t.players?.some(p => p.player_id === playerId)
+                            );
+                            if (playerTeam && playerTeam.winner) {
+                                wins++;
+                            }
+
+                            // Вытаскиваем хедшоты конкретно этого матча из структуры истории
+                            const statsNode = match.results?.teams
+                                ?.flatMap(t => t.players || [])
+                                ?.find(p => p.player_id === playerId);
+                            
+                            if (statsNode && statsNode.stats && statsNode.stats["Headshots %"]) {
+                                totalHsPct += parseFloat(statsNode.stats["Headshots %"]);
+                                hsCount++;
+                            }
+                        });
+
+                        // Рассчитываем точные показатели строго за последние 30 игр
+                        if (matchCount > 0) {
+                            winRate = Math.round((wins / matchCount) * 100) + "%";
                         }
-                    } else {
-                        kd = avgKd.toFixed(2);
+                        if (hsCount > 0) {
+                            hs = Math.round(totalHsPct / hsCount) + "%";
+                        }
                     }
+                }
+
+                // Корректировка K/D
+                if (recentResults.length > 0) {
+                    const winFactor = (recentResults.filter(r => r === "1" || r === 1).length) / recentResults.length;
+                    kd = winFactor < 0.4 ? (avgKd * 0.85).toFixed(2) : avgKd.toFixed(2);
+                } else {
+                    kd = avgKd.toFixed(2);
                 }
                 
                 return {
@@ -392,7 +423,6 @@
             let countElo = 0;
 
             for (let p of players) {
-                // Если смотрим сайт через гитхаб (https://), тащим свежие данные
                 let data = null;
                 if (window.location.protocol !== 'file:') {
                     data = await fetchPlayerData(p.nickname);
@@ -410,7 +440,6 @@
                     ? `<img src="${p.photo}" class="avatar-img" alt="${p.nickname}" onerror="handleImgError(this, '${p.nickname}')">`
                     : `<div class="avatar-placeholder">${p.nickname.charAt(0)}</div>`;
                 
-                // Исправлено: если данные с FACEIT пришли, берем ИХ, а не дефолтные заглушки
                 const kd = (data && data.stats.kd !== "—") ? data.stats.kd : "1.09"; 
                 const hsStr = (data && data.stats.hs !== "—") ? data.stats.hs : p.defaultHs;
                 const wrStr = (data && data.stats.winRate !== "—") ? data.stats.winRate : "54%";
@@ -471,7 +500,6 @@
             lineupDiv.innerHTML = html;
 
             if (countElo > 0) {
-                // Возвращено красивое и точное округление до целого числа для среднего ELO
                 document.getElementById("avg-elo").innerText = Math.round(totalElo / countElo);
             }
         }

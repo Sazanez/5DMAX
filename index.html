@@ -137,14 +137,13 @@
             perspective: 1000px; /* Глубина для 3D */
         }
 
-        /* 3D Карточка игрока */
-        .tilt-card {
+       .tilt-card {
             background: linear-gradient(135deg, rgba(20, 26, 38, 0.8) 0%, rgba(13, 17, 24, 0.9) 100%);
             border: 1px solid rgba(255, 255, 255, 0.04);
             border-radius: 16px;
             position: relative;
-            transform-style: preserve-3d; /* Фиксация слоев в 3D */
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            /* Плавное изменение размера и эффектов вместо 3D-вращения */
+            transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.3s ease, box-shadow 0.3s ease;
             overflow: hidden;
             cursor: pointer;
         }
@@ -156,19 +155,9 @@
             height: 100%;
         }
 
-        /* Лазерная линия сканирования при наведении */
-        .tilt-card::after {
-            content: "";
-            position: absolute;
-            top: -50%; left: 0; width: 100%; height: 20px;
-            background: linear-gradient(180deg, transparent, rgba(255,255,255,0.15), transparent);
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
-        }
-        .tilt-card:hover::after {
-            animation: laserScan 1.5s linear infinite;
-            opacity: 1;
+        /* Простое увеличение карточки без наклона */
+        .tilt-card:hover {
+            transform: translateY(-5px) scale(1.02);
         }
 
         @keyframes laserScan {

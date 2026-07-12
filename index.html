@@ -62,11 +62,11 @@
         /* Главный командный терминал */
         .hud-terminal {
             width: 100%;
-            max-width: 1200px;
+            max-width: 1400px; /* Увеличили общую ширину контейнера под большие карточки */
             background: rgba(10, 14, 22, 0.6);
             border: 2px solid rgba(255, 255, 255, 0.05);
             border-radius: 20px;
-            padding: 30px;
+            padding: 35px;
             box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), inset 0 0 30px rgba(99, 102, 241, 0.05);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
@@ -88,7 +88,7 @@
             align-items: center;
             border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
             padding-bottom: 20px;
-            margin-bottom: 30px;
+            margin-bottom: 35px;
         }
 
         .brand-zone {
@@ -97,7 +97,7 @@
         }
 
         .team-title {
-            font-size: 32px;
+            font-size: 36px;
             font-weight: 900;
             letter-spacing: 5px;
             color: #fff;
@@ -118,17 +118,17 @@
             text-align: right;
         }
 
-        .meta-label { font-size: 10px; color: #64748b; text-transform: uppercase; }
-        .meta-val { font-size: 16px; font-weight: bold; color: #fff; margin-top: 2px; }
+        .meta-label { font-size: 11px; color: #64748b; text-transform: uppercase; }
+        .meta-val { font-size: 18px; font-weight: bold; color: #fff; margin-top: 2px; }
 
-        /* Сетка состава */
+        /* Сетка состава (карточки стали шире) */
         .roster-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
             gap: 25px;
         }
 
-        /* Карточка игрока (Статичная, с плавным увеличением) */
+        /* Карточка игрока (Статичная, увеличен размер) */
         .tilt-card {
             background: linear-gradient(135deg, rgba(20, 26, 38, 0.8) 0%, rgba(13, 17, 24, 0.9) 100%);
             border: 1px solid rgba(255, 255, 255, 0.04);
@@ -146,9 +146,9 @@
             height: 100%;
         }
 
-        /* Эффект наведения: аккуратный подъем и увеличение */
+        /* Эффект наведения */
         .tilt-card:hover {
-            transform: translateY(-5px) scale(1.02);
+            transform: translateY(-7px) scale(1.03);
         }
 
         /* Лазерная линия сканирования при наведении */
@@ -193,15 +193,15 @@
             width: 100%; height: 100%; object-fit: cover;
             transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
         }
-        .tilt-card:hover .avatar-img { transform: scale(1.1); }
-        .avatar-placeholder { font-size: 56px; color: #1e293b; font-weight: 900; }
+        .tilt-card:hover .avatar-img { transform: scale(1.08); }
+        .avatar-placeholder { font-size: 64px; color: #1e293b; font-weight: 900; }
 
         /* Уровни FACEIT */
         .level-badge-3d {
             position: absolute; top: 12px; right: 12px;
-            width: 32px; height: 32px;
+            width: 34px; height: 34px;
             display: flex; align-items: center; justify-content: center;
-            font-weight: 900; color: #fff; border-radius: 8px; font-size: 14px;
+            font-weight: 900; color: #fff; border-radius: 8px; font-size: 15px;
             z-index: 10;
         }
         .l-10 { background: var(--glow-red); box-shadow: 0 0 15px var(--glow-red), 0 4px 10px rgba(0,0,0,0.5); animation: pulseGlow 1.5s infinite alternate; }
@@ -213,43 +213,45 @@
             100% { box-shadow: 0 0 20px var(--glow-red), 0 4px 15px rgba(239, 68, 68, 0.4); }
         }
 
-        /* Информационный блок игрока */
+        /* Информационный блок игрока (Увеличены шрифты) */
         .info-frame {
-            padding: 18px 15px;
+            padding: 20px 18px;
             background: rgba(7, 9, 14, 0.4);
         }
 
-        .p-nick { font-size: 18px; font-weight: 900; color: #fff; letter-spacing: 1px; text-transform: uppercase; }
-        .p-position { font-size: 10px; color: #64748b; text-transform: uppercase; margin-top: 4px; letter-spacing: 2px; }
+        .p-nick { font-size: 21px; font-weight: 900; color: #fff; letter-spacing: 1px; text-transform: uppercase; }
+        .p-position { font-size: 12px; color: #94a3b8; text-transform: uppercase; margin-top: 5px; letter-spacing: 2px; font-weight: bold; }
 
-        /* Блок детальной статистики */
+        /* Блок детальной статистики (Увеличены отступы и размеры) */
         .stats-frame {
-            padding: 15px;
+            padding: 18px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 15px;
             background: rgba(5, 7, 10, 0.6);
+            /* Применяем sans-serif для чистых цифр и знака % */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
         .stat-row-premium {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 11px;
+            font-size: 13px;
             color: #94a3b8;
         }
 
-        .value-premium { color: #fff; font-weight: bold; }
+        .value-premium { color: #fff; font-weight: bold; font-size: 14px; }
 
         /* Специальный HUD-тег K/D */
         .kd-hud-tag {
-            padding: 3px 10px; border-radius: 4px; font-weight: 900; font-size: 11px;
+            padding: 4px 12px; border-radius: 5px; font-weight: 900; font-size: 13px;
             background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
         }
         .kd-godlike { color: #4ade80; border-color: rgba(74, 222, 128, 0.3); background: rgba(74, 222, 128, 0.05); text-shadow: 0 0 5px rgba(74, 222, 128, 0.3); }
 
         /* Прогресс бары */
-        .bar-bg { width: 100%; height: 5px; background: rgba(255,255,255,0.03); border-radius: 3px; margin-top: 4px; overflow: hidden; border: 1px solid rgba(255,255,255,0.02); }
+        .bar-bg { width: 100%; height: 6px; background: rgba(255,255,255,0.03); border-radius: 3px; margin-top: 6px; overflow: hidden; border: 1px solid rgba(255,255,255,0.02); }
         .bar-fill { height: 100%; background: linear-gradient(90deg, #818cf8, #4f46e5); border-radius: 3px; width: 0%; transition: width 1s ease-out; }
 
         /* Поиск 5-го игрока */
@@ -257,7 +259,7 @@
             border: 2px dashed rgba(74, 222, 128, 0.2);
             background: rgba(74, 222, 128, 0.02);
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            min-height: 320px;
+            min-height: 350px;
         }
         .searching-node:hover {
             border-color: #4ade80;
@@ -265,7 +267,7 @@
             box-shadow: 0 0 30px rgba(74, 222, 128, 0.15);
         }
         .search-glitch {
-            color: #4ade80; font-weight: 900; font-size: 16px; text-transform: uppercase; letter-spacing: 3px;
+            color: #4ade80; font-weight: 900; font-size: 18px; text-transform: uppercase; letter-spacing: 3px;
             animation: pulseGlowGreen 2s infinite alternate;
         }
 
@@ -390,7 +392,7 @@
                                 <div class="p-position">${p.role}</div>
                             </div>
                             <div class="stats-frame">
-                                <div class="stat-row-premium"><span>ELO</span><span class="value-premium" style="color: #a5b4fc">#${finalElo}</span></div>
+                                <div class="stat-row-premium"><span>ELO</span><span class="value-premium" style="color: #a5b4fc">${finalElo}</span></div>
                                 <div class="stat-row-premium"><span>K/D Ratio</span><span class="${kdClass}">${kd}</span></div>
                                 
                                 <div class="stat-block-premium">

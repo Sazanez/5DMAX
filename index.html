@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>5DMAX</title>
+    <title>5DMAX // CYBER HUD</title>
     <style>
         :root {
             --glow-red: #ef4444;
@@ -105,14 +105,6 @@
             animation: textGlitch 4s infinite;
         }
 
-        .system-status {
-            font-size: 11px;
-            color: #64748b;
-            text-transform: uppercase;
-            margin-top: 5px;
-            letter-spacing: 2px;
-        }
-
         .team-meta-stats {
             display: flex;
             gap: 20px;
@@ -129,20 +121,19 @@
         .meta-label { font-size: 10px; color: #64748b; text-transform: uppercase; }
         .meta-val { font-size: 16px; font-weight: bold; color: #fff; margin-top: 2px; }
 
-        /* Новая 3D сетка состава */
+        /* Сетка состава */
         .roster-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
             gap: 25px;
-            perspective: 1000px; /* Глубина для 3D */
         }
 
-       .tilt-card {
+        /* Карточка игрока (Статичная, с плавным увеличением) */
+        .tilt-card {
             background: linear-gradient(135deg, rgba(20, 26, 38, 0.8) 0%, rgba(13, 17, 24, 0.9) 100%);
             border: 1px solid rgba(255, 255, 255, 0.04);
             border-radius: 16px;
             position: relative;
-            /* Плавное изменение размера и эффектов вместо 3D-вращения */
             transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.3s ease, box-shadow 0.3s ease;
             overflow: hidden;
             cursor: pointer;
@@ -155,9 +146,24 @@
             height: 100%;
         }
 
-        /* Простое увеличение карточки без наклона */
+        /* Эффект наведения: аккуратный подъем и увеличение */
         .tilt-card:hover {
             transform: translateY(-5px) scale(1.02);
+        }
+
+        /* Лазерная линия сканирования при наведении */
+        .tilt-card::after {
+            content: "";
+            position: absolute;
+            top: -50%; left: 0; width: 100%; height: 20px;
+            background: linear-gradient(180deg, transparent, rgba(255,255,255,0.15), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        .tilt-card:hover::after {
+            animation: laserScan 1.5s linear infinite;
+            opacity: 1;
         }
 
         @keyframes laserScan {
@@ -170,7 +176,7 @@
         .card-lvl-9:hover { border-color: rgba(255, 102, 0, 0.4); box-shadow: 0 0 35px rgba(255, 102, 0, 0.18); }
         .card-lvl-8:hover { border-color: rgba(99, 102, 241, 0.4); box-shadow: 0 0 35px rgba(99, 102, 241, 0.15); }
 
-        /* Аватар с эффектом глубины */
+        /* Аватар */
         .avatar-frame {
             width: 100%;
             aspect-ratio: 1/1;
@@ -180,7 +186,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transform: translateZ(30px); /* Приподнимаем над карточкой */
             border-bottom: 1px solid rgba(255,255,255,0.03);
         }
 
@@ -191,13 +196,12 @@
         .tilt-card:hover .avatar-img { transform: scale(1.1); }
         .avatar-placeholder { font-size: 56px; color: #1e293b; font-weight: 900; }
 
-        /* Уровни - Плазменные 3D ядра */
+        /* Уровни FACEIT */
         .level-badge-3d {
             position: absolute; top: 12px; right: 12px;
             width: 32px; height: 32px;
             display: flex; align-items: center; justify-content: center;
             font-weight: 900; color: #fff; border-radius: 8px; font-size: 14px;
-            transform: translateZ(50px); /* Выносим сильно вперед */
             z-index: 10;
         }
         .l-10 { background: var(--glow-red); box-shadow: 0 0 15px var(--glow-red), 0 4px 10px rgba(0,0,0,0.5); animation: pulseGlow 1.5s infinite alternate; }
@@ -212,7 +216,6 @@
         /* Информационный блок игрока */
         .info-frame {
             padding: 18px 15px;
-            transform: translateZ(20px);
             background: rgba(7, 9, 14, 0.4);
         }
 
@@ -225,7 +228,6 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
-            transform: translateZ(15px);
             background: rgba(5, 7, 10, 0.6);
         }
 
@@ -256,7 +258,6 @@
             background: rgba(74, 222, 128, 0.02);
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             min-height: 320px;
-            transform: translateZ(0);
         }
         .searching-node:hover {
             border-color: #4ade80;
@@ -297,7 +298,7 @@
         </div>
 
         <div class="roster-grid" id="lineup">
-            <div style="color: #64748b; padding: 50px; grid-column: span 5; text-align: center; font-size: 14px; letter-spacing: 2px; text-transform: uppercase;">[ Инициализация защищенного протокола связи с FACEIT API... ]</div>
+            <div style="color: #64748b; padding: 50px; grid-column: span 5; text-align: center; font-size: 14px; letter-spacing: 2px; text-transform: uppercase;">Загрузка данных...</div>
         </div>
     </div>
 
@@ -378,7 +379,7 @@
                 const kdClass = parseFloat(kd) >= 1.0 ? 'kd-hud-tag kd-godlike' : 'kd-hud-tag';
 
                 html += `
-                    <div class="tilt-card ${cardLvlClass}" data-tilt>
+                    <div class="tilt-card ${cardLvlClass}">
                         <a href="https://www.faceit.com/ru/players/${p.nickname}" target="_blank" class="card-inner-link">
                             <div class="level-badge-3d ${lvlClass}">${finalLvl}</div>
                             <div class="avatar-frame">
@@ -389,16 +390,16 @@
                                 <div class="p-position">${p.role}</div>
                             </div>
                             <div class="stats-frame">
-                                <div class="stat-row-premium"><span>INDEX // ELO</span><span class="value-premium" style="color: #a5b4fc">#${finalElo}</span></div>
-                                <div class="stat-row-premium"><span>PERF // K/D</span><span class="${kdClass}">${kd}</span></div>
+                                <div class="stat-row-premium"><span>ELO</span><span class="value-premium" style="color: #a5b4fc">#${finalElo}</span></div>
+                                <div class="stat-row-premium"><span>K/D Ratio</span><span class="${kdClass}">${kd}</span></div>
                                 
                                 <div class="stat-block-premium">
-                                    <div class="stat-row-premium"><span>AIMS // HS</span><span class="value-premium">${hsStr}</span></div>
+                                    <div class="stat-row-premium"><span>Headshots</span><span class="value-premium">${hsStr}</span></div>
                                     <div class="bar-bg"><div class="bar-fill" style="width: ${hsNum}%"></div></div>
                                 </div>
                                 
                                 <div class="stat-block-premium">
-                                    <div class="stat-row-premium"><span>WINS // WR</span><span class="value-premium">${wrStr}</span></div>
+                                    <div class="stat-row-premium"><span>Win Rate</span><span class="value-premium">${wrStr}</span></div>
                                     <div class="bar-bg"><div class="bar-fill" style="width: ${wrNum}%; background: linear-gradient(90deg, #4ade80, #22c55e)"></div></div>
                                 </div>
                             </div>
@@ -408,7 +409,7 @@
             }
 
             html += `
-                <div class="tilt-card searching-node" data-tilt>
+                <div class="tilt-card searching-node">
                     <div class="search-glitch">В поиске</div>
                     <div class="p-position" style="margin-top: 8px;">[ 5th slots active ]</div>
                 </div>
@@ -416,7 +417,7 @@
 
             lineupDiv.innerHTML = html;
 
-           if (countElo > 0) {
+            if (countElo > 0) {
                 document.getElementById("avg-elo").innerText = Math.round(totalElo / countElo);
             }
         }

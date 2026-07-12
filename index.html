@@ -416,35 +416,9 @@
 
             lineupDiv.innerHTML = html;
 
-            if (countElo > 0) {
+           if (countElo > 0) {
                 document.getElementById("avg-elo").innerText = Math.round(totalElo / countElo);
             }
-
-            init3DTilt();
-        }
-
-        /* Полностью кастомный высокопроизводительный движок 3D наклона карточек */
-        function init3DTilt() {
-            const cards = document.querySelectorAll('[data-tilt]');
-            cards.forEach(card => {
-                card.addEventListener('mousemove', e => {
-                    const rect = card.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const y = e.clientY - rect.top;
-                    
-                    const xc = rect.width / 2;
-                    const yc = rect.height / 2;
-                    
-                    const angleX = (yc - y) / 10; // Угол наклона по вертикали
-                    const angleY = (x - xc) / 10; // Угол наклона по горизонтали
-                    
-                    card.style.transform = `rotateX(${angleX}deg) rotateY(${angleY}deg) scale(1.03)`;
-                });
-                
-                card.addEventListener('mouseleave', () => {
-                    card.style.transform = 'rotateX(0deg) rotateY(0deg) scale(1)';
-                });
-            });
         }
 
         buildLineup();

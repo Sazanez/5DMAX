@@ -324,7 +324,7 @@
                         let totalHs = 0;
                         let wins = 0;
                         
-                        // Проходим по каждому матчу и собираем стату игрока в нём
+                       // Проходим по каждому матчу и собираем стату игрока в нём
                         for (let match of matches) {
                             const mRes = await fetch(`https://open.faceit.com/data/v4/matches/${match.match_id}/stats`, {
                                 headers: { 'Authorization': `Bearer ${API_KEY}` }
@@ -339,7 +339,11 @@
                                     if (team) {
                                         const pStats = team.players.find(p => p.player_id === playerId);
                                         if (pStats) {
-                                            totalKd += parseFloat(pStats.player_stats["K/D Ratio"]) || 0;
+                                            // Считаем классический K/D (Убийства / Смерти)
+                                            const kills = parseFloat(pStats.player_stats["Kills"]) || 0;
+                                            const deaths = parseFloat(pStats.player_stats["Deaths"]) || 1; // защита от деления на 0
+                                            
+                                            totalKd += (kills / deaths);
                                             totalHs += parseFloat(pStats.player_stats["Headshots %"]) || 0;
                                             if (team.team_stats["Team Win"] === "1") wins++;
                                             matchCount++;
@@ -419,7 +423,7 @@
                             </div>
                             <div class="stats-frame">
                                 <div class="stat-row-premium"><span>ELO</span><span class="value-premium" style="color: #a5b4fc">${finalElo}</span></div>
-                                <div class="stat-row-premium"><span>K/D Ratio</span><span class="${kdClass}">${kd}</span></div>
+                                <div class="stat-row-premium"><span>K/D</span><span class="${kdClass}">${kd}</span></div>
                                 
                                 <div class="stat-block-premium">
                                     <div class="stat-row-premium"><span>Headshots</span><span class="value-premium">${hsStr}</span></div>

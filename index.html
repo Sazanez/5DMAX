@@ -31,7 +31,6 @@
             position: relative;
         }
 
-        /* Футуристичный HUD фон */
         body::before {
             content: "";
             position: absolute;
@@ -43,7 +42,6 @@
             pointer-events: none;
         }
 
-        /* Бегущие Sci-Fi lines */
         .bg-lines {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -59,7 +57,6 @@
             100% { transform: translateY(100%); }
         }
 
-        /* Главный командный терминал */
         .hud-terminal {
             width: 100%;
             max-width: 1400px;
@@ -259,14 +256,11 @@
         }
         .kd-godlike { color: #4ade80; border-color: rgba(74, 222, 128, 0.3); background: rgba(74, 222, 128, 0.05); text-shadow: 0 0 5px rgba(74, 222, 128, 0.3); }
 
-        .bar-bg { width: 100%; height: 6px; background: rgba(255,255,255,0.03); border-radius: 3px; margin-top: 6px; overflow: hidden; border: 1px solid rgba(255,255,255,0.02); }
-        .bar-fill { height: 100%; background: linear-gradient(90deg, #818cf8, #4f46e5); border-radius: 3px; width: 0%; transition: width 1s ease-out; }
-
         .searching-node {
             border: 2px dashed rgba(74, 222, 128, 0.2);
             background: rgba(74, 222, 128, 0.02);
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            min-height: 480px;
+            min-height: 410px;
         }
         .searching-node:hover {
             border-color: #4ade80;
@@ -315,15 +309,14 @@
         const API_KEY = "db82dc3b-da7c-49ed-a80a-f7c2880b623e";
         
         const players = [
-            { nickname: "Magistr333", role: "IGL", defaultLvl: 8, defaultElo: 1637, defaultHs: "48%", photo: "magistr.png" },
-            { nickname: "DZAGAA", role: "AWP", defaultLvl: 9, defaultElo: 1898, defaultHs: "38%", photo: "dzaga.png" },
-            { nickname: "Sazanchiks", role: "Rifler", defaultLvl: 10, defaultElo: 2012, defaultHs: "52%", photo: "sazan.png" },
-            { nickname: "ArtemLob1", role: "Rifler", defaultLvl: 8, defaultElo: 1532, defaultHs: "46%", photo: "artem.png" }
+            { nickname: "Magistr333", role: "IGL", defaultLvl: 8, defaultElo: 1637, photo: "magistr.png" },
+            { nickname: "DZAGAA", role: "AWP", defaultLvl: 9, defaultElo: 1898, photo: "dzaga.png" },
+            { nickname: "Sazanchiks", role: "Rifler", defaultLvl: 10, defaultElo: 2012, photo: "sazan.png" },
+            { nickname: "ArtemLob1", role: "Rifler", defaultLvl: 8, defaultElo: 1532, photo: "artem.png" }
         ];
 
         async function fetchPlayerData(nickname) {
             try {
-                // 1. Получаем ID игрока по никнейму
                 const pRes = await fetch(`https://open.faceit.com/data/v4/players?nickname=${nickname}`, {
                     headers: { 'Authorization': `Bearer ${API_KEY}` }
                 });
@@ -331,79 +324,34 @@
                 const pData = await pRes.json();
                 const playerId = pData.player_id;
 
-                // 2. Запрашиваем историю матчей с запасом (до 60 штук), чтобы выудить ровно 30 чистых CS2 игр
-                const hRes = await fetch(`https://open.faceit.com/data/v4/players/${playerId}/history?game=cs2&limit=60`, {
-                    headers: { 'Authorization': `Bearer ${API_KEY}` }
-                });
+                let kd = "—"; let matches = "—"; let wins = "—";
                 
-                let kd = "—"; let winRate = "—"; let hs = "—";
-                
-                // Запрашиваем базовый статистический блок для K/D трендов
                 const segRes = await fetch(`https://open.faceit.com/data/v4/players/${playerId}/stats/cs2`, {
                     headers: { 'Authorization': `Bearer ${API_KEY}` }
                 });
                 
-                let avgKd = 1.0;
-                let recentResults = [];
                 if (segRes.ok) {
                     const segData = await segRes.json();
-                    avgKd = parseFloat(segData.lifetime["Average K/D Ratio"]) || 1.0;
-                    recentResults = segData.lifetime["Recent Results"] || [];
-                }
-
-                if (hRes.ok) {
-                    const hData = await hRes.json();
-                    if (hData.items && hData.items.length > 0) {
-                        // Фильтруем строго завершенные матчи
-                        const matches = hData.items.filter(m => m.status === "FINISHED").slice(0, 30);
-                        let matchCount = matches.length;
-                        let wins = 0;
-                        let totalHsPct = 0;
-                        let hsCount = 0;
-
-                        matches.forEach(match => {
-                            // Проверяем победу в данном матче
-                            const playerTeam = match.results?.teams?.find(t => 
-                                t.players?.some(p => p.player_id === playerId)
-                            );
-                            if (playerTeam && playerTeam.winner) {
-                                wins++;
-                            }
-
-                            // Вытаскиваем хедшоты конкретно этого матча из структуры истории
-                            const statsNode = match.results?.teams
-                                ?.flatMap(t => t.players || [])
-                                ?.find(p => p.player_id === playerId);
-                            
-                            if (statsNode && statsNode.stats && statsNode.stats["Headshots %"]) {
-                                totalHsPct += parseFloat(statsNode.stats["Headshots %"]);
-                                hsCount++;
-                            }
-                        });
-
-                        // Рассчитываем точные показатели строго за последние 30 игр
-                        if (matchCount > 0) {
-                            winRate = Math.round((wins / matchCount) * 100) + "%";
-                        }
-                        if (hsCount > 0) {
-                            hs = Math.round(totalHsPct / hsCount) + "%";
-                        }
+                    
+                    // Железобетонные данные без погрешностей истории
+                    matches = segData.lifetime["Matches"] || "—";
+                    wins = segData.lifetime["Wins"] || "—";
+                    
+                    const avgKd = parseFloat(segData.lifetime["Average K/D Ratio"]) || 0;
+                    const recentResults = segData.lifetime["Recent Results"] || [];
+                    if (recentResults.length > 0) {
+                        const winFactor = (recentResults.filter(r => r === "1" || r === 1).length) / recentResults.length;
+                        kd = winFactor < 0.4 ? (avgKd * 0.85).toFixed(2) : avgKd.toFixed(2);
+                    } else {
+                        kd = avgKd.toFixed(2);
                     }
-                }
-
-                // Корректировка K/D
-                if (recentResults.length > 0) {
-                    const winFactor = (recentResults.filter(r => r === "1" || r === 1).length) / recentResults.length;
-                    kd = winFactor < 0.4 ? (avgKd * 0.85).toFixed(2) : avgKd.toFixed(2);
-                } else {
-                    kd = avgKd.toFixed(2);
                 }
                 
                 return {
                     nickname: pData.nickname,
                     lvl: pData.games.cs2?.skill_level || pData.games.csgo?.skill_level || "—",
                     elo: pData.games.cs2?.faceit_elo || pData.games.csgo?.faceit_elo || "—",
-                    stats: { kd, hs, winRate }
+                    stats: { kd, matches, wins }
                 };
             } catch (e) { 
                 console.error(e);
@@ -441,11 +389,8 @@
                     : `<div class="avatar-placeholder">${p.nickname.charAt(0)}</div>`;
                 
                 const kd = (data && data.stats.kd !== "—") ? data.stats.kd : "1.09"; 
-                const hsStr = (data && data.stats.hs !== "—") ? data.stats.hs : p.defaultHs;
-                const wrStr = (data && data.stats.winRate !== "—") ? data.stats.winRate : "54%";
-                
-                const hsNum = parseFloat(hsStr) || 0;
-                const wrNum = parseFloat(wrStr) || 0;
+                const mCount = data ? data.stats.matches : "—";
+                const wCount = data ? data.stats.wins : "—";
 
                 let lvlClass = 'l-8'; let cardLvlClass = 'card-lvl-8'; let eloNumClass = 'num-lvl-8';
                 if (finalLvl == 10) { lvlClass = 'l-10'; cardLvlClass = 'card-lvl-10'; eloNumClass = 'num-lvl-10'; }
@@ -474,16 +419,8 @@
                                 </div>
 
                                 <div class="stat-row-premium"><span>K/D</span><span class="${kdClass}">${kd}</span></div>
-                                
-                                <div class="stat-block-premium">
-                                    <div class="stat-row-premium"><span>Headshots</span><span class="value-premium">${hsStr}</span></div>
-                                    <div class="bar-bg"><div class="bar-fill" style="width: ${hsNum}%"></div></div>
-                                </div>
-                                
-                                <div class="stat-block-premium">
-                                    <div class="stat-row-premium"><span>Win Rate</span><span class="value-premium">${wrStr}</span></div>
-                                    <div class="bar-bg"><div class="bar-fill" style="width: ${wrNum}%; background: linear-gradient(90deg, #4ade80, #22c55e)"></div></div>
-                                </div>
+                                <div class="stat-row-premium"><span>Total Matches</span><span class="value-premium">${mCount}</span></div>
+                                <div class="stat-row-premium"><span>Total Wins</span><span class="value-premium">${wCount}</span></div>
                             </div>
                         </a>
                     </div>

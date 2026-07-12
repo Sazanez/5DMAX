@@ -301,7 +301,7 @@
                 <div class="team-title">5DMAX</div>
             </div>
             <div class="team-meta-stats">
-                <div class="meta-box"><div class="meta-label">AVG ELO</div><div class="meta-val" id="avg-elo">1769</div></div>
+                <div class="meta-box"><div class="meta-label">AVG ELO</div><div class="meta-val" id="avg-elo">1770</div></div>
                 <div class="meta-box"><div class="meta-label">ROSTER STATUS</div><div class="meta-val" style="color: #4ade80; font-size: 14px;">● ONLINE</div></div>
             </div>
         </div>
@@ -332,7 +332,6 @@
 
                 let kd = "—"; let winRate = "—"; let hs = "—";
                 
-                // Стучимся в детальный блок CS2
                 const segRes = await fetch(`https://open.faceit.com/data/v4/players/${playerId}/stats/cs2`, {
                     headers: { 'Authorization': `Bearer ${API_KEY}` }
                 });
@@ -340,7 +339,7 @@
                 if (segRes.ok) {
                     const segData = await segRes.json();
                     
-                    // 1. Извлекаем чистый процент побед из статистики самого профиля (без сбоев истории)
+                    // 1. Извлекаем чистый процент побед
                     if (segData.lifetime["Win Rate %"]) {
                         winRate = segData.lifetime["Win Rate %"] + "%";
                     } else if (segData.lifetime["Recent Results"]) {
@@ -349,7 +348,7 @@
                         winRate = Math.round((recentWins / recentResults.length) * 100) + "%";
                     }
 
-                    // 2. Вытягиваем абсолютно точный процент хэдшотов с Faceit (без округлений)
+                    // 2. Вытягиваем процент хэдшотов
                     if (segData.lifetime["Average Headshots %"]) {
                         hs = segData.lifetime["Average Headshots %"] + "%";
                     }
@@ -393,6 +392,7 @@
             let countElo = 0;
 
             for (let p of players) {
+                // Если смотрим сайт через гитхаб (https://), тащим свежие данные
                 let data = null;
                 if (window.location.protocol !== 'file:') {
                     data = await fetchPlayerData(p.nickname);
@@ -410,11 +410,11 @@
                     ? `<img src="${p.photo}" class="avatar-img" alt="${p.nickname}" onerror="handleImgError(this, '${p.nickname}')">`
                     : `<div class="avatar-placeholder">${p.nickname.charAt(0)}</div>`;
                 
-                const kd = data ? data.stats.kd : "1.09"; 
-                const hsStr = data ? data.stats.hs : p.defaultHs;
-                const wrStr = data ? data.stats.winRate : "54%";
+                // Исправлено: если данные с FACEIT пришли, берем ИХ, а не дефолтные заглушки
+                const kd = (data && data.stats.kd !== "—") ? data.stats.kd : "1.09"; 
+                const hsStr = (data && data.stats.hs !== "—") ? data.stats.hs : p.defaultHs;
+                const wrStr = (data && data.stats.winRate !== "—") ? data.stats.winRate : "54%";
                 
-                // Используем parseFloat, чтобы полоски прогресса учитывали дробные значения до сотых
                 const hsNum = parseFloat(hsStr) || 0;
                 const wrNum = parseFloat(wrStr) || 0;
 
@@ -471,8 +471,8 @@
             lineupDiv.innerHTML = html;
 
             if (countElo > 0) {
-                // Выводим среднее ELO с идеальной точностью до десятых долей
-                document.getElementById("avg-elo").innerText = (totalElo / countElo).toFixed(1);
+                // Возвращено красивое и точное округление до целого числа для среднего ELO
+                document.getElementById("avg-elo").innerText = Math.round(totalElo / countElo);
             }
         }
 

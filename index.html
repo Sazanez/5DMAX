@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5DMAX | Live Faceit Ростер</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #1b1f26; color: #d3d7db; margin: 0; padding: 20px; }
+        .header { background-color: #232a36; padding: 25px; border-bottom: 2px solid #323d4f; border-radius: 4px; margin-bottom: 20px; }
+        h1 { color: #ffffff; margin: 0; font-size: 24px; text-transform: uppercase; letter-spacing: 1px; }
+        .subtitle { color: #8a96a8; font-size: 13px; margin-top: 5px; }
+        .main-layout { display: flex; gap: 20px; flex-wrap: wrap; }
+        .column { flex: 1; min-width: 300px; }
+        .section-title { background-color: #232a36; padding: 10px; color: #fff; font-weight: bold; text-transform: uppercase; font-size: 14px; border-left: 3px solid #2d68c4; margin-bottom: 12px; }
+        .player-row { display: flex; justify-content: space-between; align-items: center; background: #1d232c; border: 1px solid #262f3d; padding: 12px; margin-bottom: 8px; border-radius: 3px; }
+        .player-name { color: #fff; font-weight: bold; font-size: 16px; }
+        .player-role { color: #8a96a8; font-size: 12px; margin-top: 2px; }
+        
+        /* Стили уровней Faceit */
+        .lvl { width: 35px; height: 30px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff; border-radius: 4px; font-size: 13px; text-decoration: none; }
+        .lvl-10 { background-color: #ff5500; box-shadow: 0 0 8px #ff5500; }
+        .lvl-9 { background-color: #ff5500; border-left: 4px solid #fff; } /* 9 lvl чуть светлее или с отметкой */
+        .lvl-8 { background-color: #ff5500; opacity: 0.9; }
+        .lvl-default { background-color: #ffff00; color: #000; }
+        
+        .elo-text { font-size: 11px; color: #8a96a8; text-align: right; margin-top: 2px; }
+        .search-active { border: 1px dashed #4b5563; background: repeating-linear-gradient(45deg, #1d232c, #1d232c 10px, #222933 10px, #222933 20px); }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>5DMAX E-SPORTS</h1>
+        <div class="subtitle">Автоматический Live-профиль команды через FACEIT API</div>
+    </div>
+
+    <div class="main-layout">
+        <div class="column">
+            <div class="section-title">Текущий ростер (Данные обновляются)</div>
+            <div id="roster">
+                
+                <!-- Magistr333 -->
+                <div class="player-row">
+                    <div>
+                        <div class="player-name">Magistr333</div>
+                        <div class="player-role">Игровой лидер (IGL)</div>
+                    </div>
+                    <div>
+                        <a href="https://www.faceit.com/ru/players/Magistr333" target="_blank" class="lvl lvl-8" id="lvl-Magistr333">LVL 8</a>
+                        <div class="elo-text" id="elo-Magistr333">1637 ELO</div>
+                    </div>
+                </div>
+
+                <!-- DZAGAA -->
+                <div class="player-row">
+                    <div>
+                        <div class="player-name">DZAGAA</div>
+                        <div class="player-role">Снайпер (AWP)</div>
+                    </div>
+                    <div>
+                        <a href="https://www.faceit.com/ru/players/DZAGAA" target="_blank" class="lvl lvl-9" id="lvl-DZAGAA">LVL 9</a>
+                        <div class="elo-text" id="elo-DZAGAA">1898 ELO</div>
+                    </div>
+                </div>
+
+                <!-- Sazanchiks -->
+                <div class="player-row">
+                    <div>
+                        <div class="player-name">Sazanchiks</div>
+                        <div class="player-role">Стрелок (Rifler)</div>
+                    </div>
+                    <div>
+                        <a href="https://www.faceit.com/ru/players/Sazanchiks" target="_blank" class="lvl lvl-10" id="lvl-Sazanchiks">LVL 10</a>
+                        <div class="elo-text" id="elo-Sazanchiks">2012 ELO</div>
+                    </div>
+                </div>
+
+                <!-- ArtemLob1 -->
+                <div class="player-row">
+                    <div>
+                        <div class="player-name">ArtemLob1</div>
+                        <div class="player-role">Стрелок (Rifler)</div>
+                    </div>
+                    <div>
+                        <a href="https://www.faceit.com/ru/players/ArtemLob1" target="_blank" class="lvl lvl-8" id="lvl-ArtemLob1">LVL 8</a>
+                        <div class="elo-text" id="elo-ArtemLob1">1532 ELO</div>
+                    </div>
+                </div>
+
+                <!-- ВАКАНСИЯ -->
+                <div class="player-row search-active">
+                    <div>
+                        <div class="player-name" style="color: #8a96a8;">?? (ВАКАНСИЯ)</div>
+                        <div class="player-role" style="color: #5ba62c; font-weight: bold;">В активном поиске игрока 🔍</div>
+                    </div>
+                    <div class="lvl" style="background-color: #374151;">—</div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_KEY = "db82dc3b-da7c-49ed-a80a-f7c2880b623e";
+        const nicknames = ["Magistr333", "DZAGAA", "Sazanchiks", "ArtemLob1"];
+
+        async function updateLiveStats() {
+            // Этот скрипт сработает автоматически, когда сайт будет загружен на хостинг
+            for (let nick of nicknames) {
+                try {
+                    const response = await fetch(`https://open.faceit.com/data/v4/players?nickname=${nick}`, {
+                        headers: { 'Authorization': `Bearer ${API_KEY}` }
+                    });
+                    if (response.ok) {
+                        const data = await response.json();
+                        const elo = data.games.cs2?.faceit_elo || data.games.csgo?.faceit_elo;
+                        const lvl = data.games.cs2?.skill_level || data.games.csgo?.skill_level;
+                        
+                        if(elo) document.getElementById(`elo-${nick}`).innerText = elo + " ELO";
+                        if(lvl) {
+                            const lvlEl = document.getElementById(`lvl-${nick}`);
+                            lvlEl.innerText = "LVL " + lvl;
+                            lvlEl.className = `lvl lvl-${lvl == 10 ? '10' : lvl == 9 ? '9' : '8'}`;
+                        }
+                    }
+                } catch (e) { /* Игнорируем локальные ошибки CORS до заливки на хостинг */ }
+            }
+        }
+        
+        // Пробуем обновить, если сайт уже в сети
+        if (window.location.protocol !== 'file:') {
+            updateLiveStats();
+        }
+    </script>
+</body>
+</html>

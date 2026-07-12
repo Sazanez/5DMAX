@@ -150,28 +150,13 @@
         .tilt-card:hover {
             transform: translateY(-7px) scale(1.03);
         }
-
-        /* Лазерная линия сканирования при наведении */
-        .tilt-card::after {
-            content: "";
-            position: absolute;
-            top: -50%; left: 0; width: 100%; height: 20px;
-            background: linear-gradient(180deg, transparent, rgba(255,255,255,0.15), transparent);
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
         }
         .tilt-card:hover::after {
             animation: laserScan 1.5s linear infinite;
             opacity: 1;
         }
 
-        @keyframes laserScan {
-            0% { top: -10%; }
-            100% { top: 110%; }
-        }
-        
-       /* Индивидуальные эффекты подсветок уровней */
+        /* Индивидуальные эффекты подсветок уровней */
         .card-lvl-10:hover { border-color: rgba(255, 26, 0, 0.6); box-shadow: 0 0 35px rgba(255, 26, 0, 0.3); }
         .card-lvl-9:hover { border-color: rgba(255, 102, 0, 0.4); box-shadow: 0 0 35px rgba(255, 102, 0, 0.18); }
         .card-lvl-8:hover { border-color: rgba(99, 102, 241, 0.4); box-shadow: 0 0 35px rgba(99, 102, 241, 0.15); }

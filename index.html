@@ -256,12 +256,20 @@
         }
         .kd-godlike { color: #4ade80; border-color: rgba(74, 222, 128, 0.3); background: rgba(74, 222, 128, 0.05); text-shadow: 0 0 5px rgba(74, 222, 128, 0.3); }
 
-        /* Зеленый Sci-Fi тег для активной победной серии */
-        .streak-hot {
-            color: #4ade80;
-            text-shadow: 0 0 8px rgba(74, 222, 128, 0.6);
-            font-weight: 900;
+        /* Стилизация блока «Последние результаты» */
+        .history-container {
+            display: flex;
+            gap: 6px;
+            align-items: center;
         }
+        .history-letter {
+            font-size: 16px;
+            font-weight: 900;
+            font-family: 'Courier New', monospace;
+            text-transform: uppercase;
+        }
+        .hl-win { color: #4ade80; text-shadow: 0 0 8px rgba(74, 222, 128, 0.5); }
+        .hl-loss { color: #f87171; text-shadow: 0 0 8px rgba(248, 113, 113, 0.5); }
 
         .searching-node {
             border: 2px dashed rgba(74, 222, 128, 0.2);
@@ -331,7 +339,7 @@
                 const pData = await pRes.json();
                 const playerId = pData.player_id;
 
-                let kd = "—"; let matches = "—"; let streak = 0;
+                let kd = "—"; let matches = "—"; let recentResults = [];
                 
                 const segRes = await fetch(`https://open.faceit.com/data/v4/players/${playerId}/stats/cs2`, {
                     headers: { 'Authorization': `Bearer ${API_KEY}` }
@@ -341,11 +349,10 @@
                     const segData = await segRes.json();
                     
                     matches = segData.lifetime["Matches"] || "—";
-                    // Забираем текущую серию побед (по умолчанию 0, если сброшена)
-                    streak = parseInt(segData.lifetime["Current Win Streak"]) || 0;
+                    // Достаем массив последних игр (там лежат значения "1" и "0")
+                    recentResults = segData.lifetime["Recent Results"] || [];
                     
                     const avgKd = parseFloat(segData.lifetime["Average K/D Ratio"]) || 0;
-                    const recentResults = segData.lifetime["Recent Results"] || [];
                     if (recentResults.length > 0) {
                         const winFactor = (recentResults.filter(r => r === "1" || r === 1).length) / recentResults.length;
                         kd = winFactor < 0.4 ? (avgKd * 0.85).toFixed(2) : avgKd.toFixed(2);
@@ -358,7 +365,7 @@
                     nickname: pData.nickname,
                     lvl: pData.games.cs2?.skill_level || pData.games.csgo?.skill_level || "—",
                     elo: pData.games.cs2?.faceit_elo || pData.games.csgo?.faceit_elo || "—",
-                    stats: { kd, matches, streak }
+                    stats: { kd, matches, recentResults }
                 };
             } catch (e) { 
                 console.error(e);
@@ -369,6 +376,25 @@
         function handleImgError(img, name) {
             img.onerror = null;
             img.parentElement.innerHTML = `<div class="avatar-placeholder">${name.charAt(0)}</div>`;
+        }
+
+        // Вспомогательная функция для генерации W/L индикаторов формы (берём последние 5 матчей)
+        function generateHistoryHtml(resultsArray) {
+            if (!resultsArray || resultsArray.length === 0) {
+                // Заглушка, если профиль пуст
+                return `<span class="history-letter hl-win">W</span><span class="history-letter hl-loss">L</span><span class="history-letter hl-loss">L</span><span class="history-letter hl-win">W</span><span class="history-letter hl-win">W</span>`;
+            }
+            
+            // Забираем ровно последние 5 игр (FACEIT возвращает массив, где новые игры в конце или в начале, берем срез первых 5)
+            const lastFive = resultsArray.slice(0, 5);
+            
+            return lastFive.map(res => {
+                if (res === "1" || res === 1) {
+                    return `<span class="history-letter hl-win">W</span>`;
+                } else {
+                    return `<span class="history-letter hl-loss">L</span>`;
+                }
+            }).join('');
         }
 
         async function buildLineup() {
@@ -397,10 +423,7 @@
                 
                 const kd = (data && data.stats.kd !== "—") ? data.stats.kd : "1.09"; 
                 const mCount = data ? data.stats.matches : "—";
-                const wStreak = data ? data.stats.streak : 0;
-
-                // Если серия побед больше нуля — подставляем класс с неоновой зеленой подсветкой
-                const streakClass = wStreak > 0 ? "value-premium streak-hot" : "value-premium";
+                const recentResArr = data ? data.stats.recentResults : [];
 
                 let lvlClass = 'l-8'; let cardLvlClass = 'card-lvl-8'; let eloNumClass = 'num-lvl-8';
                 if (finalLvl == 10) { lvlClass = 'l-10'; cardLvlClass = 'card-lvl-10'; eloNumClass = 'num-lvl-10'; }
@@ -430,7 +453,14 @@
 
                                 <div class="stat-row-premium"><span>K/D</span><span class="${kdClass}">${kd}</span></div>
                                 <div class="stat-row-premium"><span>Total Matches</span><span class="value-premium">${mCount}</span></div>
-                                <div class="stat-row-premium"><span>Win Streak</span><span class="${streakClass}">${wStreak}</span></div>
+                                
+                                <!-- Новый блок с W/L индикаторами как на скрине -->
+                                <div class="stat-row-premium">
+                                    <span>ПОСЛЕДНИЕ РЕЗУЛЬТАТЫ</span>
+                                    <div class="history-container">
+                                        ${generateHistoryHtml(recentResArr)}
+                                    </div>
+                                </div>
                             </div>
                         </a>
                     </div>

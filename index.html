@@ -205,7 +205,7 @@
 
         .p-nick { font-size: 21px; font-weight: 900; color: #fff; letter-spacing: 1px; text-transform: uppercase; }
         
-        /* Прокачанные роли игроков */
+        /* Прокачанные роли игроков (Строгий единый стиль) */
         .p-position { 
             display: inline-block;
             font-size: 11px; 
@@ -215,13 +215,10 @@
             letter-spacing: 2px; 
             padding: 4px 10px;
             border-radius: 6px;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #38bdf8; 
+            border: 1px solid rgba(56, 189, 248, 0.3); 
+            background: rgba(56, 189, 248, 0.05);
         }
-        /* Единый цвет для всех ролей игроков */
-        .role-igl { color: #38bdf8; border-color: rgba(56, 189, 248, 0.3); background: rgba(56, 189, 248, 0.05); }
-        .role-awp { color: #38bdf8; border-color: rgba(56, 189, 248, 0.3); background: rgba(56, 189, 248, 0.05); }
-        .role-rifler { color: #38bdf8; border-color: rgba(56, 189, 248, 0.3); background: rgba(56, 189, 248, 0.05); }
 
         /* Блок детальной статистики */
         .stats-frame {
@@ -233,45 +230,31 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
-       /* Базовый блок ELO */
+        /* Премиальный блок ELO */
         .elo-premium-block {
+            background: linear-gradient(90deg, rgba(99, 102, 241, 0.08) 0%, rgba(79, 70, 229, 0.02) 100%);
+            border: 1px solid rgba(99, 102, 241, 0.2);
             border-radius: 8px;
             padding: 10px 14px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 8px;
+            box-shadow: inset 0 0 10px rgba(99, 102, 241, 0.05);
         }
-        /* Темы ELO под цвета уровней FACEIT */
-        .elo-lvl-10 {
-            background: linear-gradient(90deg, rgba(255, 26, 0, 0.15) 0%, rgba(255, 26, 0, 0.02) 100%);
-            border: 1px solid rgba(255, 26, 0, 0.4);
-            box-shadow: inset 0 0 10px rgba(255, 26, 0, 0.1);
-        }
-        .elo-lvl-10 .elo-main-label { color: #ff1a00; }
-
-        .elo-lvl-9 {
-            background: linear-gradient(90deg, rgba(255, 102, 0, 0.15) 0%, rgba(255, 102, 0, 0.02) 100%);
-            border: 1px solid rgba(255, 102, 0, 0.3);
-            box-shadow: inset 0 0 10px rgba(255, 102, 0, 0.08);
-        }
-        .elo-lvl-9 .elo-main-label { color: #ff6600; }
-
-        .elo-lvl-8 {
-            background: linear-gradient(90deg, rgba(255, 85, 0, 0.15) 0%, rgba(255, 85, 0, 0.02) 100%);
-            border: 1px solid rgba(255, 85, 0, 0.3);
-            box-shadow: inset 0 0 10px rgba(255, 85, 0, 0.08);
-        }
-        .elo-lvl-8 .elo-main-label { color: #ff5500; }
-
         .elo-label-group {
             display: flex;
             flex-direction: column;
             gap: 2px;
         }
-        .elo-main-label { font-size: 11px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; }
+        .elo-main-label { font-size: 11px; color: #6366f1; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; }
         .elo-sub-label { font-size: 8px; color: #475569; letter-spacing: 0.5px; text-transform: uppercase; }
-        .elo-value { font-size: 20px; font-weight: 900; color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.1); font-family: 'Courier New', monospace; }
+        
+        /* Стилизация цифр ELO под цвет уровня */
+        .elo-value { font-size: 20px; font-weight: 900; font-family: 'Courier New', monospace; }
+        .num-lvl-10 { color: #ff1a00; text-shadow: 0 0 10px rgba(255, 26, 0, 0.4); }
+        .num-lvl-9 { color: #ff6600; text-shadow: 0 0 10px rgba(255, 102, 0, 0.3); }
+        .num-lvl-8 { color: #ff5500; text-shadow: 0 0 10px rgba(255, 85, 0, 0.3); }
 
         .stat-row-premium {
             display: flex;
@@ -466,9 +449,9 @@
                 const hsNum = parseInt(hsStr) || 0;
                 const wrNum = parseInt(wrStr) || 0;
 
-               let lvlClass = 'l-8'; let cardLvlClass = 'card-lvl-8'; let eloClass = 'elo-lvl-8';
-                if (finalLvl == 10) { lvlClass = 'l-10'; cardLvlClass = 'card-lvl-10'; eloClass = 'elo-lvl-10'; }
-                else if (finalLvl == 9) { lvlClass = 'l-9'; cardLvlClass = 'card-lvl-9'; eloClass = 'elo-lvl-9'; }
+                let lvlClass = 'l-8'; let cardLvlClass = 'card-lvl-8'; let eloNumClass = 'num-lvl-8';
+                if (finalLvl == 10) { lvlClass = 'l-10'; cardLvlClass = 'card-lvl-10'; eloNumClass = 'num-lvl-10'; }
+                else if (finalLvl == 9) { lvlClass = 'l-9'; cardLvlClass = 'card-lvl-9'; eloNumClass = 'num-lvl-9'; }
 
                 const kdClass = parseFloat(kd) >= 1.0 ? 'kd-hud-tag kd-godlike' : 'kd-hud-tag';
 
@@ -481,16 +464,16 @@
                             </div>
                             <div class="info-frame">
                                 <div class="p-nick">${p.nickname}</div>
-                                <div class="p-position role-${p.role.toLowerCase()}">${p.role}</div>
+                                <div class="p-position">${p.role}</div>
                             </div>
                             <div class="stats-frame">
-                                <!-- Новый премиальный блок ELO -->
-                                <div class="elo-premium-block ${eloClass}">
+                                <!-- Премиальный блок ELO с цветной цифрой -->
+                                <div class="elo-premium-block">
                                     <div class="elo-label-group">
                                         <span class="elo-main-label">ELO RATING</span>
                                         <span class="elo-sub-label">Faceit Points</span>
                                     </div>
-                                    <span class="elo-value">${finalElo}</span>
+                                    <span class="elo-value ${eloNumClass}">${finalElo}</span>
                                 </div>
 
                                 <div class="stat-row-premium"><span>K/D</span><span class="${kdClass}">${kd}</span></div>

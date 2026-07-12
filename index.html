@@ -35,7 +35,6 @@
         .lvl-10 { background-color: #ff5500; box-shadow: 0 0 5px #ff5500; }
         .lvl-9 { background-color: #ff5500; border-left: 3px solid #fff; }
         .lvl-8 { background-color: #ff5500; opacity: 0.9; }
-        .lvl-7 { background-color: #ffff00; color: #000; }
 
         .searching-card { border: 1px dashed #4b5563; background: repeating-linear-gradient(45deg, #1d232c, #1d232c 10px, #232a36 10px, #232a36 20px); justify-content: center; min-height: 220px; }
         .searching-text { color: #5ba62c; font-weight: bold; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; padding: 20px 10px; }
@@ -52,7 +51,7 @@
         </div>
 
         <div class="lineup-grid" id="lineup">
-            <div style="color: #8a96a8; padding: 20px; grid-column: span 5; text-align: center;">Синхронизация с серверами FACEIT...</div>
+            <div style="color: #8a96a8; padding: 20px; grid-column: span 5; text-align: center;">Загрузка ростера FACEIT...</div>
         </div>
     </div>
 
@@ -60,15 +59,15 @@
         const API_KEY = "db82dc3b-da7c-49ed-a80a-f7c2880b623e";
         
         const players = [
-            { nickname: "Magistr333", role: "IGL", defaultLvl: 8, defaultElo: 1637 },
-            { nickname: "DZAGAA", role: "AWP", defaultLvl: 9, defaultElo: 1898 },
-            { nickname: "Sazanchiks", role: "Rifler", defaultLvl: 10, defaultElo: 2012 },
-            { nickname: "ArtemLob1", role: "Rifler", defaultLvl: 8, defaultElo: 1532 }
+            { nickname: "Magistr333", role: "IGL", defaultLvl: 8, defaultElo: 1637, defaultHs: "48%" },
+            { nickname: "DZAGAA", role: "AWP", defaultLvl: 9, defaultElo: 1898, defaultHs: "38%" },
+            { nickname: "Sazanchiks", role: "Rifler", defaultLvl: 10, defaultElo: 2012, defaultHs: "52%" },
+            { nickname: "ArtemLob1", role: "Rifler", defaultLvl: 8, defaultElo: 1532, defaultHs: "46%" }
         ];
 
         async function fetchPlayerData(nickname) {
             try {
-                // 1. Профиль игрока (ID, ник, аватарка, уровни)
+                // 1. Профиль игрока
                 const pRes = await fetch(`https://open.faceit.com/data/v4/players?nickname=${nickname}`, {
                     headers: { 'Authorization': `Bearer ${API_KEY}` }
                 });
@@ -76,67 +75,20 @@
                 const pData = await pRes.json();
                 const playerId = pData.player_id;
 
-                // 2. Общая статистика (K/D и Win Rate)
+                // 2. Статистика (K/D, Win Rate, Headshots %)
                 const sRes = await fetch(`https://open.faceit.com/data/v4/players/${playerId}/stats/cs2`, {
                     headers: { 'Authorization': `Bearer ${API_KEY}` }
                 });
                 
                 let kd = "—";
                 let winRate = "—";
+                let hs = "—";
+                
                 if (sRes.ok) {
                     const sData = await sRes.json();
                     kd = sData.lifetime["Average K/D Ratio"] || "—";
                     winRate = sData.lifetime["Win Rate %"] ? sData.lifetime["Win Rate %"] + "%" : "—";
-                }
-
-                // 3. Высчитываем AVG Kills из истории последних матчей (берем до 30 игр)
-                let avgKills = "—";
-                const hRes = await fetch(`https://open.faceit.com/data/v4/players/${playerId}/history?game=cs2&limit=30`, {
-                    headers: { 'Authorization': `Bearer ${API_KEY}` }
-                });
-                
-                if (hRes.ok) {
-                    const hData = await hRes.json();
-                    if (hData.items && hData.items.length > 0) {
-                        let totalKills = 0;
-                        let count = 0;
-                        
-                        // Бежим по матчам и ищем статистику самого игрока
-                        for (let match of hData.items) {
-                            // Проверяем, есть ли результаты по раундам
-                            if (match.results && match.results.teams) {
-                                // Ищем фракции/команды в матче
-                                const matchStatsRes = await fetch(`https://open.faceit.com/data/v4/matches/${match.match_id}/stats`, {
-                                    headers: { 'Authorization': `Bearer ${API_KEY}` }
-                                });
-                                if (matchStatsRes.ok) {
-                                    const mStats = await matchStatsRes.ok ? await matchStatsRes.json() : null;
-                                    if (mStats && mStats.rounds) {
-                                        for (let round of mStats.rounds) {
-                                            for (let team of round.teams) {
-                                                let player = team.players.find(pl => pl.player_id === playerId);
-                                                if (player && player.player_stats) {
-                                                    totalKills += parseInt(player.player_stats.Kills || 0);
-                                                    count++;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            // Ограничим вложенные запросы ради скорости, если матчей слишком много
-                            if (count >= 10) break; 
-                        }
-                        if (count > 0) {
-                            avgKills = (totalKills / count).toFixed(1);
-                        }
-                    }
-                }
-
-                // Если глубокий просчет матчей не успел выполниться или пуст, дадим базовое среднее значение
-                if (avgKills === "—" && sRes.ok) {
-                    // Альтернативный запасной вариант: легкий расчет по общим фрагам
-                    avgKills = "19.2"; 
+                    hs = sData.lifetime["Average Headshots %"] ? sData.lifetime["Average Headshots %"] + "%" : "—";
                 }
 
                 return {
@@ -144,7 +96,7 @@
                     avatar: pData.avatar || "",
                     lvl: pData.games.cs2?.skill_level || pData.games.csgo?.skill_level || "—",
                     elo: pData.games.cs2?.faceit_elo || pData.games.csgo?.faceit_elo || "—",
-                    stats: { kd, avgKills, winRate }
+                    stats: { kd, hs, winRate }
                 };
             } catch (e) {
                 return null;
@@ -168,14 +120,12 @@
                     : `<div class="no-avatar">${p.nickname.charAt(0)}</div>`;
                 
                 const kd = data ? data.stats.kd : "1.09"; 
-                const avg = data ? data.stats.avgKills : "19.5";
+                const hs = data ? data.stats.hs : p.defaultHs;
                 const wr = data ? data.stats.winRate : "54%";
 
-                // Определяем класс для уровней (поддержка 7, 8, 9, 10)
                 let lvlClass = 'lvl-8';
                 if (finalLvl == 10) lvlClass = 'lvl-10';
                 else if (finalLvl == 9) lvlClass = 'lvl-9';
-                else if (finalLvl == 7) lvlClass = 'lvl-7';
 
                 html += `
                     <div class="player-card">
@@ -191,7 +141,7 @@
                             <div class="player-stats">
                                 <div class="stat-row"><span>ELO</span><span class="stat-value">${finalElo}</span></div>
                                 <div class="stat-row"><span>K/D Ratio</span><span class="stat-value" style="color: ${kd >= 1 ? '#5ba62c' : '#ef4444'}">${kd}</span></div>
-                                <div class="stat-row"><span>AVG Kills</span><span class="stat-value">${avg}</span></div>
+                                <div class="stat-row"><span>Headshots</span><span class="stat-value">${hs}</span></div>
                                 <div class="stat-row"><span>Win Rate</span><span class="stat-value">${wr}</span></div>
                             </div>
                         </a>

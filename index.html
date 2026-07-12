@@ -307,58 +307,22 @@
                 const pData = await pRes.json();
                 const playerId = pData.player_id;
 
-                // 2. Запрашиваем историю последних 30 матчей конкретно для CS2
-                const hRes = await fetch(`https://open.faceit.com/data/v4/players/${playerId}/history?game=cs2&limit=30`, {
+                // 2. Получаем сводную статистику CS2
+                const sRes = await fetch(`https://open.faceit.com/data/v4/players/${playerId}/stats/cs2`, {
                     headers: { 'Authorization': `Bearer ${API_KEY}` }
                 });
                 
                 let kd = "—"; let winRate = "—"; let hs = "—";
                 
-                if (hRes.ok) {
-                    const hData = await hRes.json();
-                    
-                    if (hData.items && hData.items.length > 0) {
-                        const matches = hData.items;
-                        let matchCount = 0;
-                        let totalKd = 0;
-                        let totalHs = 0;
-                        let wins = 0;
-                        
-                       // Проходим по каждому матчу и собираем стату игрока в нём
-                        for (let match of matches) {
-                            const mRes = await fetch(`https://open.faceit.com/data/v4/matches/${match.match_id}/stats`, {
-                                headers: { 'Authorization': `Bearer ${API_KEY}` }
-                            });
-                            
-                            if (mRes.ok) {
-                                const mData = await mRes.json();
-                                if (mData.rounds && mData.rounds[0]) {
-                                    const team = mData.rounds[0].teams.find(t => 
-                                        t.players.some(p => p.player_id === playerId)
-                                    );
-                                    if (team) {
-                                        const pStats = team.players.find(p => p.player_id === playerId);
-                                        if (pStats) {
-                                            // Считаем классический K/D (Убийства / Смерти)
-                                            const kills = parseFloat(pStats.player_stats["Kills"]) || 0;
-                                            const deaths = parseFloat(pStats.player_stats["Deaths"]) || 1; // защита от деления на 0
-                                            
-                                            totalKd += (kills / deaths);
-                                            totalHs += parseFloat(pStats.player_stats["Headshots %"]) || 0;
-                                            if (team.team_stats["Team Win"] === "1") wins++;
-                                            matchCount++;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        
-                        if (matchCount > 0) {
-                            kd = (totalKd / matchCount).toFixed(2);
-                            hs = Math.round(totalHs / matchCount) + "%";
-                            winRate = Math.round((wins / matchCount) * 100) + "%";
-                        }
-                    }
+                if (sRes.ok) {
+                    const sData = await sRes.json();
+                    kd = sData.lifetime["Average K/D Ratio"] || "—";
+                    winRate = sData.lifetime["Win Rate %"] ? sData.lifetime["Win Rate %"] + "%" : "—";
+                    hs = sData.lifetime["Average Headshots %"] ? sData.lifetime["Average Headshots %"] + "%" : "—";
+                }
+
+                if (kd !== "—") {
+                    kd = parseFloat(kd).toFixed(2);
                 }
                 
                 return {

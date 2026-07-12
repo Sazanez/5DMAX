@@ -299,6 +299,159 @@
             { nickname: "ArtemLob1", role: "Rifler", defaultLvl: 8, defaultElo: 1532, defaultHs: "46%" }
         ];
 
+        async function fetchPlayerData(nickname) {
+            try {
+                // 1. Получаем ID игрока по никнейму
+                const pRes = await fetch(`https://open.faceit.com/data/v4/players?nickname=${nickname}`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
+                if (!pRes.ok) return null;
+                const pData = await pRes.json();
+                const playerId = pData.player_id;
+
+                // 2. Запрашиваем историю последних 30 матчей конкретно для CS2
+                const hRes = await fetch(`https://open.faceit.com/data/v4/players/${playerId}/history?game=cs2&limit=30`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
+                
+                let kd = "—"; let winRate = "—"; let hs = "—";
+                
+                if (hRes.ok) {
+                    const hData = await hRes.json();
+                    
+                    if (hData.items && hData.items.length > 0) {
+                        const matches = hData.items;
+                        let matchCount = 0;
+                        let totalKd = 0;
+                        let totalHs = 0;
+                        let wins = 0;
+                        
+                        // Проходим по каждому матчу и собираем стату игрока в нём
+                        for (let match of matches) {
+                            const mRes = await fetch(`https://open.faceit.com/data/v4/matches/${match.match_id}/stats`, {
+                                headers: { 'Authorization': `Bearer ${API_KEY}` }
+                            });
+                            
+                            if (mRes.ok) {
+                                const mData = await mRes.json();
+                                // Ищемстатистику нашего игрока в этом матче
+                                const team = mData.rounds[0].teams.find(t => 
+                                    t.players.some(p => p.player_id === playerId)
+                                );
+                                if (team) {
+                                    const pStats = team.players.find(p => p.player_id === playerId);
+                                    if (pStats) {
+                                        totalKd += parseFloat(pStats.player_stats["K/D Ratio"]) || 0;
+                                        totalHs += parseFloat(pStats.player_stats["Headshots %"]) || 0;
+                                        // Проверяем, победила ли команда игрока
+                                        if (team.team_stats["Team Win"] === "1") wins++;
+                                        matchCount++;
+                                    }
+                                }
+                            }
+                        }
+                        
+                        if (matchCount > 0) {
+                            kd = (totalKd / matchCount).toFixed(2);
+                            hs = Math.round(totalHs / matchCount) + "%";
+                            winRate = Math.round((wins / matchCount) * 100) + "%";
+                        }
+                    }
+                }
+                
+                return {
+                    nickname: pData.nickname,
+                    avatar: pData.avatar || "",
+                    lvl: pData.games.cs2?.skill_level || pData.games.csgo?.skill_level || "—",
+                    elo: pData.games.cs2?.faceit_elo || pData.games.csgo?.faceit_elo || "—",
+                    stats: { kd, hs, winRate }
+                };
+            } catch (e) { 
+                console.error(e);
+                return null; 
+            }
+        }
+
+        async function buildLineup() {
+            const lineupDiv = document.getElementById("lineup");
+            let html = "";
+            let totalElo = 0;
+            let countElo = 0;
+
+            for (let p of players) {
+                let data = null;
+                if (window.location.protocol !== 'file:') {
+                    data = await fetchPlayerData(p.nickname);
+                }
+
+                const finalLvl = data ? data.lvl : p.defaultLvl;
+                const finalElo = data ? data.elo : p.defaultElo;
+                
+                if (Number(finalElo)) {
+                    totalElo += Number(finalElo);
+                    countElo++;
+                }
+
+                const avatarHtml = (data && data.avatar) 
+                    ? `<img src="${data.avatar}" class="avatar-img" alt="${p.nickname}">`
+                    : `<div class="avatar-placeholder">${p.nickname.charAt(0)}</div>`;
+                
+                const kd = data ? data.stats.kd : "1.09"; 
+                const hsStr = data ? data.stats.hs : p.defaultHs;
+                const wrStr = data ? data.stats.winRate : "54%";
+                const hsNum = parseInt(hsStr) || 0;
+                const wrNum = parseInt(wrStr) || 0;
+
+                let lvlClass = 'l-8'; let cardLvlClass = 'card-lvl-8';
+                if (finalLvl == 10) { lvlClass = 'l-10'; cardLvlClass = 'card-lvl-10'; }
+                else if (finalLvl == 9) { lvlClass = 'l-9'; cardLvlClass = 'card-lvl-9'; }
+
+                const kdClass = parseFloat(kd) >= 1.0 ? 'kd-hud-tag kd-godlike' : 'kd-hud-tag';
+
+                html += `
+                    <div class="tilt-card ${cardLvlClass}">
+                        <a href="https://www.faceit.com/ru/players/${p.nickname}" target="_blank" class="card-inner-link">
+                            <div class="level-badge-3d ${lvlClass}">${finalLvl}</div>
+                            <div class="avatar-frame">
+                                ${avatarHtml}
+                            </div>
+                            <div class="info-frame">
+                                <div class="p-nick">${p.nickname}</div>
+                                <div class="p-position">${p.role}</div>
+                            </div>
+                            <div class="stats-frame">
+                                <div class="stat-row-premium"><span>ELO</span><span class="value-premium" style="color: #a5b4fc">${finalElo}</span></div>
+                                <div class="stat-row-premium"><span>K/D Ratio</span><span class="${kdClass}">${kd}</span></div>
+                                
+                                <div class="stat-block-premium">
+                                    <div class="stat-row-premium"><span>Headshots</span><span class="value-premium">${hsStr}</span></div>
+                                    <div class="bar-bg"><div class="bar-fill" style="width: ${hsNum}%"></div></div>
+                                </div>
+                                
+                                <div class="stat-block-premium">
+                                    <div class="stat-row-premium"><span>Win Rate</span><span class="value-premium">${wrStr}</span></div>
+                                    <div class="bar-bg"><div class="bar-fill" style="width: ${wrNum}%; background: linear-gradient(90deg, #4ade80, #22c55e)"></div></div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                `;
+            }
+
+            html += `
+                <div class="tilt-card searching-node">
+                    <div class="search-glitch">В поиске</div>
+                    <div class="p-position" style="margin-top: 8px;">[ 5th slots active ]</div>
+                </div>
+            `;
+
+            lineupDiv.innerHTML = html;
+
+            if (countElo > 0) {
+                document.getElementById("avg-elo").innerText = Math.round(totalElo / countElo);
+            }
+        }
+
 fetchPlayerData
             html += `
                 <div class="tilt-card searching-node">

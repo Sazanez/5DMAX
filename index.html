@@ -11,7 +11,7 @@
             --glow-blue: #6366f1;
             --bg-dark: #0a0c10;
             
-            /* 🌟 Актуальные настройки высоты из твоего скриншота */
+            /* 🌟 Твои актуальные настройки высоты */
             --pos-Magistr333: center 20%;  
             --pos-DZAGAA: center 9%;   
             --pos-Sazanchiks: center 20%;  
@@ -26,7 +26,8 @@
 
         body { 
             font-family: 'Courier New', Courier, monospace, sans-serif; 
-            background: radial-gradient(circle at center, #141923 0%, #07090d 100%);
+            /* Глубокая основа для космоса/туманности */
+            background-color: #05070b;
             color: #e2e8f0; 
             min-height: 100vh;
             display: flex; 
@@ -37,27 +38,98 @@
             position: relative;
         }
 
+        /* 🌟 Живой фон: Пульсирующие неоновые облака (туманность) */
+        .ambient-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .glow-cloud-1, .glow-cloud-2 {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(140px);
+            opacity: 0.12;
+            mix-blend-mode: screen;
+        }
+
+        /* Красное облако слева вверху */
+        .glow-cloud-1 {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--glow-red) 0%, transparent 70%);
+            top: -10%;
+            left: -10%;
+            animation: floatGlow1 20s ease-in-out infinite alternate;
+        }
+
+        /* Сине-фиолетовое облако справа внизу */
+        .glow-cloud-2 {
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, var(--glow-blue) 0%, transparent 70%);
+            bottom: -15%;
+            right: -10%;
+            animation: floatGlow2 25s ease-in-out infinite alternate;
+        }
+
+        /* 🌟 Летающие частицы на фоне */
+        .particles-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            background-image: 
+                radial-gradient(circle, rgba(255, 26, 0, 0.08) 1px, transparent 1px),
+                radial-gradient(circle, rgba(99, 102, 241, 0.08) 1.5px, transparent 1.5px);
+            background-size: 80px 80px, 130px 130px;
+            background-position: 0 0, 40px 40px;
+            animation: riseParticles 60s linear infinite;
+        }
+
+        /* Анимации плавающих неоновых облаков */
+        @keyframes floatGlow1 {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(80px, 50px) scale(1.2); }
+        }
+
+        @keyframes floatGlow2 {
+            0% { transform: translate(0, 0) scale(1.1); }
+            100% { transform: translate(-100px, -60px) scale(0.9); }
+        }
+
+        /* Анимация медленного подъема частиц вверх */
+        @keyframes riseParticles {
+            0% { background-position: 0 0, 40px 40px; }
+            100% { background-position: 0 -800px, 40px -1040px; }
+        }
+
         /* Вариант 3: Эффект текстуры CRT-монитора с микро-шумом */
         body::before {
             content: "";
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
             background: 
-                linear-gradient(rgba(18, 24, 38, 0) 50%, rgba(0, 0, 0, 0.15) 50%),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px) 0 0 / 20px 20px,
-                linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px) 0 0 / 20px 20px;
+                linear-gradient(rgba(18, 24, 38, 0) 50%, rgba(0, 0, 0, 0.2) 50%),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.012) 1px, transparent 1px) 0 0 / 20px 20px,
+                linear-gradient(rgba(255, 255, 255, 0.012) 1px, transparent 1px) 0 0 / 20px 20px;
             background-size: 100% 4px, 40px 40px, 40px 40px;
-            z-index: 0;
+            z-index: 2;
             pointer-events: none;
         }
 
         .bg-lines {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 0;
+            z-index: 1;
             pointer-events: none;
-            opacity: 0.15;
-            background: linear-gradient(180deg, rgba(239, 64, 64, 0) 0%, rgba(239, 64, 64, 0.1) 50%, rgba(239, 64, 64, 0) 100%);
+            opacity: 0.12;
+            background: linear-gradient(180deg, rgba(239, 64, 64, 0) 0%, rgba(239, 64, 64, 0.08) 50%, rgba(239, 64, 64, 0) 100%);
             animation: scanline 8s linear infinite;
         }
 
@@ -69,15 +141,15 @@
         .hud-terminal {
             width: 100%;
             max-width: 1400px;
-            background: rgba(10, 14, 22, 0.6);
+            background: rgba(10, 14, 22, 0.75); /* Сделали терминал чуть плотнее, чтобы текст читался идеально */
             border: 2px solid rgba(255, 255, 255, 0.05);
             border-radius: 20px;
             padding: 35px;
-            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), inset 0 0 30px rgba(99, 102, 241, 0.05);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 0 60px rgba(0, 0, 0, 0.85), inset 0 0 30px rgba(99, 102, 241, 0.03);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
             position: relative;
-            z-index: 1;
+            z-index: 3;
         }
 
         .hud-terminal::before, .hud-terminal::after {
@@ -464,6 +536,12 @@
 </head>
 <body>
 
+    <!-- 🌟 Элементы живого бэкграунда -->
+    <div class="ambient-glow">
+        <div class="glow-cloud-1"></div>
+        <div class="glow-cloud-2"></div>
+    </div>
+    <div class="particles-container"></div>
     <div class="bg-lines"></div>
 
     <div class="hud-terminal">
@@ -601,7 +679,7 @@
                     isOnline = pData.status === "online" || pData.status === "ingame" || pData.activated === true;
                 }
                 
-                // 2. Получаем историю и рассчитываем K/D за последние 20 матчей
+                // 2. Получаем историю и рассчитываем K/D за последние 20 матчей (limit=20)
                 const historyRes = await fetch(`https://open.faceit.com/data/v4/players/${playerId}/history?game=cs2&limit=20`, {
                     headers: { 'Authorization': `Bearer ${API_KEY}` }
                 });
@@ -655,7 +733,7 @@
                     matches = segData.lifetime["Matches"] || "—";
                     recentResults = segData.lifetime["Recent Results"] || [];
                     
-                    // Если не удалось рассчитать K/D по истории матчей, берём глобальный в качестве запаски
+                    // Если рассчитан K/D по истории матчей, берем его. Иначе берем глобальный.
                     if (calculatedKd > 0) {
                         kd = calculatedKd.toFixed(2);
                     } else {

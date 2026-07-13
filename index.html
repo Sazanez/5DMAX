@@ -11,11 +11,11 @@
             --glow-blue: #6366f1;
             --bg-dark: #0a0c10;
             
-            /* Индивидуальная подгонка высоты для каждого игрока */
+            /* Актуальные настройки высоты для идеального выравнивания */
             --pos-Magistr333: center 18%;  
-            --pos-DZAGAA: center 13%;   
+            --pos-DZAGAA: center 10%;   
             --pos-Sazanchiks: center 20%;  
-            --pos-ArtemLob1: center 22%;   
+            --pos-ArtemLob1: center 25%;   
         }
 
         * {
@@ -26,7 +26,8 @@
 
         body { 
             font-family: 'Courier New', Courier, monospace, sans-serif; 
-            background: radial-gradient(circle at center, #141923 0%, #07090d 100%);
+            /* 🌟 Вариант 2: Глубокий радиальный красно-угольный неон */
+            background: radial-gradient(circle at center, #1a0503 0%, #0a0505 50%, #040406 100%);
             color: #e2e8f0; 
             min-height: 100vh;
             display: flex; 
@@ -70,7 +71,7 @@
             border: 2px solid rgba(255, 255, 255, 0.05);
             border-radius: 20px;
             padding: 35px;
-            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), inset 0 0 30px rgba(99, 102, 241, 0.05);
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), inset 0 0 30px rgba(255, 26, 0, 0.02);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             position: relative;
@@ -120,14 +121,12 @@
             gap: 15px;
         }
 
-        /* 🌟 По умолчанию скрываем статистику на других вкладках */
         .roster-meta-panel {
             display: none; 
             gap: 15px;
             align-items: center;
         }
 
-        /* Показываем её, только когда добавляется класс active */
         .roster-meta-panel.active {
             display: flex;
             animation: fadeIn 0.3s ease-in-out;
@@ -529,7 +528,6 @@
             { nickname: "ArtemLob1", role: "Rifler", defaultLvl: 8, defaultElo: 1532, photo: "artem.png" }
         ];
 
-        /* 🌟 Обновленный переключатель вкладок */
         function switchTab(tabId, buttonElement) {
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
@@ -541,12 +539,11 @@
             document.getElementById(tabId).classList.add('active');
             buttonElement.classList.add('active');
 
-            // Управляем видимостью блока статистики
             const metaPanel = document.getElementById('hud-meta-panel');
             if (tabId === 'roster-tab') {
-                metaPanel.classList.add('active'); // Включаем на вкладке Состав
+                metaPanel.classList.add('active'); 
             } else {
-                metaPanel.classList.remove('active'); // Прячем на остальных
+                metaPanel.classList.remove('active'); 
             }
         }
 

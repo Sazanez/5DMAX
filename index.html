@@ -12,8 +12,8 @@
             --bg-dark: #0a0c10;
             
             /* Актуальные настройки высоты для идеального выравнивания */
-            --pos-Magistr333: center 18%;  
-            --pos-DZAGAA: center 10%;   
+            --pos-Magistr333: center 20%;  
+            --pos-DZAGAA: center 9%;   
             --pos-Sazanchiks: center 20%;  
             --pos-ArtemLob1: center 25%;   
         }
@@ -26,8 +26,7 @@
 
         body { 
             font-family: 'Courier New', Courier, monospace, sans-serif; 
-            /* 🌟 Вариант 2: Глубокий радиальный красно-угольный неон */
-            background: radial-gradient(circle at center, #1a0503 0%, #0a0505 50%, #040406 100%);
+            background: radial-gradient(circle at center, #141923 0%, #07090d 100%);
             color: #e2e8f0; 
             min-height: 100vh;
             display: flex; 
@@ -38,13 +37,16 @@
             position: relative;
         }
 
+        /* 🌟 Вариант 3: Эффект текстуры CRT-монитора с микро-шумом и тонкими линиями */
         body::before {
             content: "";
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
             background: 
-                linear-gradient(rgba(255, 255, 255, 0.01) 1px, transparent 1px) 0 0 / 40px 40px,
-                linear-gradient(90deg, rgba(255, 255, 255, 0.01) 1px, transparent 1px) 0 0 / 40px 40px;
+                linear-gradient(rgba(18, 24, 38, 0) 50%, rgba(0, 0, 0, 0.15) 50%),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px) 0 0 / 20px 20px,
+                linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px) 0 0 / 20px 20px;
+            background-size: 100% 4px, 40px 40px, 40px 40px;
             z-index: 0;
             pointer-events: none;
         }
@@ -71,7 +73,7 @@
             border: 2px solid rgba(255, 255, 255, 0.05);
             border-radius: 20px;
             padding: 35px;
-            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), inset 0 0 30px rgba(255, 26, 0, 0.02);
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), inset 0 0 30px rgba(99, 102, 241, 0.05);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             position: relative;

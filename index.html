@@ -12,10 +12,10 @@
             --bg-dark: #0a0c10;
             
             /* Актуальные настройки высоты для идеального выравнивания */
-            --pos-Magistr333: center 20%;  
-            --pos-DZAGAA: center 9%;   
-            --pos-Sazanchiks: center 20%;  
-            --pos-ArtemLob1: center 25%;   
+            --pos-Magistr333: center 18%;  
+            --pos-DZAGAA: center 25%;   
+            --pos-Sazanchiks: center 2%;  
+            --pos-ArtemLob1: center 22%;   
         }
 
         * {
@@ -37,7 +37,7 @@
             position: relative;
         }
 
-        /* Вариант 3: Эффект текстуры CRT-монитора */
+        /* Вариант 3: Эффект текстуры CRT-монитора с микро-шумом */
         body::before {
             content: "";
             position: absolute;
@@ -292,7 +292,6 @@
             background: rgba(7, 9, 14, 0.4);
         }
 
-        /* Никнейм игрока и точка его онлайна */
         .p-nick-wrapper {
             display: flex;
             align-items: center;
@@ -614,7 +613,7 @@
                     matches = segData.lifetime["Matches"] || "—";
                     recentResults = segData.lifetime["Recent Results"] || [];
                     
-                    // 🌟 БЕРЕМ ЧИСТЫЙ И НАДЕЖНЫЙ K/D НАПРЯМУЮ С FACEIT
+                    // БЕРЕМ ЧИСТЫЙ И НАДЕЖНЫЙ K/D НАПРЯМУЮ С FACEIT
                     const avgKd = parseFloat(segData.lifetime["Average K/D Ratio"]);
                     kd = !isNaN(avgKd) ? avgKd.toFixed(2) : "—";
                 }
@@ -628,19 +627,6 @@
                 };
             } catch (e) { 
                 console.error("Ошибка при запросе данных игрока:", e);
-                return null; 
-            }
-        }
-                
-                return {
-                    nickname: pData.nickname,
-                    lvl: pData.games.cs2?.skill_level || pData.games.csgo?.skill_level || "—",
-                    elo: pData.games.cs2?.faceit_elo || pData.games.csgo?.faceit_elo || "—",
-                    isOnline: isOnline,
-                    stats: { kd, matches, recentResults }
-                };
-            } catch (e) { 
-                console.error(e);
                 return null; 
             }
         }
@@ -761,3 +747,5 @@
 
         buildLineup();
     </script>
+</body>
+</html>

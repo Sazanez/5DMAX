@@ -11,7 +11,7 @@
             --glow-blue: #6366f1;
             --bg-dark: #0a0c10;
             
-            /* Актуальные настройки высоты для идеального выравнивания */
+            /* 🌟 Актуальные настройки высоты из твоего скриншота */
             --pos-Magistr333: center 20%;  
             --pos-DZAGAA: center 9%;   
             --pos-Sazanchiks: center 20%;  
@@ -588,7 +588,6 @@
                     });
                     if (activeMatchRes.ok) {
                         const activeMatchData = await activeMatchRes.json();
-                        // Если у последнего матча статус "ongoing" (идет), значит игрок 100% ОНЛАЙН в игре
                         if (activeMatchData.items && activeMatchData.items[0] && activeMatchData.items[0].status === "ongoing") {
                             isOnline = true;
                         }
@@ -602,20 +601,67 @@
                     isOnline = pData.status === "online" || pData.status === "ingame" || pData.activated === true;
                 }
                 
-                // 2. Получаем статистику по CS2
+                // 2. Получаем историю и рассчитываем K/D за последние 20 матчей
+                const historyRes = await fetch(`https://open.faceit.com/data/v4/players/${playerId}/history?game=cs2&limit=20`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
+                
+                let calculatedKd = 0;
+                let validMatchesCount = 0;
+                
+                if (historyRes.ok) {
+                    const historyData = await historyRes.json();
+                    if (historyData.items && historyData.items.length > 0) {
+                        let totalKills = 0;
+                        let totalDeaths = 0;
+                        
+                        // Запрашиваем детальную статистику каждого матча для точного расчёта K/D
+                        const statsPromises = historyData.items.map(match => {
+                            return fetch(`https://open.faceit.com/data/v4/matches/${match.match_id}/stats`, {
+                                headers: { 'Authorization': `Bearer ${API_KEY}` }
+                            }).then(res => res.ok ? res.json() : null).catch(() => null);
+                        });
+                        
+                        const allMatchesStats = await Promise.all(statsPromises);
+                        
+                        allMatchesStats.forEach(matchStats => {
+                            if (matchStats && matchStats.rounds) {
+                                matchStats.rounds.forEach(round => {
+                                    const playerStats = round.teams.flatMap(t => t.players).find(p => p.player_id === playerId);
+                                    if (playerStats) {
+                                        const kills = parseInt(playerStats.player_stats.Kills) || 0;
+                                        const deaths = parseInt(playerStats.player_stats.Deaths) || 0;
+                                        totalKills += kills;
+                                        totalDeaths += deaths;
+                                        validMatchesCount++;
+                                    }
+                                });
+                            }
+                        });
+                        
+                        if (totalDeaths > 0) {
+                            calculatedKd = totalKills / totalDeaths;
+                        }
+                    }
+                }
+
+                // 3. Получаем глобальную статистику по CS2 (для общего числа матчей и последних результатов)
                 const segRes = await fetch(`https://open.faceit.com/data/v4/players/${playerId}/stats/cs2`, {
                     headers: { 'Authorization': `Bearer ${API_KEY}` }
                 });
                 
                 if (segRes.ok) {
                     const segData = await segRes.json();
-                    
                     matches = segData.lifetime["Matches"] || "—";
                     recentResults = segData.lifetime["Recent Results"] || [];
                     
-                    // БЕРЕМ ЧИСТЫЙ И НАДЕЖНЫЙ K/D НАПРЯМУЮ С FACEIT
-                    const avgKd = parseFloat(segData.lifetime["Average K/D Ratio"]);
-                    kd = !isNaN(avgKd) ? avgKd.toFixed(2) : "—";
+                    // Если не удалось рассчитать K/D по истории матчей, берём глобальный в качестве запаски
+                    if (calculatedKd > 0) {
+                        kd = calculatedKd.toFixed(2);
+                    } else {
+                        const avgKd = parseFloat(segData.lifetime["Average K/D Ratio"]);
+                        kd = !isNaN(avgKd) ? avgKd.toFixed(2) : "—";
+                    }
                 }
                 
                 return {
@@ -714,7 +760,7 @@
                                     <span class="elo-value ${eloNumClass}">${finalElo}</span>
                                 </div>
 
-                                <div class="stat-row-premium"><span>K/D</span><span class="${kdClass}">${kd}</span></div>
+                                <div class="stat-row-premium"><span>K/D (Last 20)</span><span class="${kdClass}">${kd}</span></div>
                                 <div class="stat-row-premium"><span>Total Matches</span><span class="value-premium">${mCount}</span></div>
                                 
                                 <div class="stat-row-premium">

@@ -14,7 +14,7 @@
             /* Индивидуальная подгонка высоты для каждого игрока */
             --pos-Magistr333: center 18%;  
             --pos-DZAGAA: center 25%;   
-            --pos-Sazanchiks: center 24%;  
+            --pos-Sazanchiks: center 20%;  
             --pos-ArtemLob1: center 22%;   
         }
 
@@ -106,7 +106,6 @@
             animation: textGlitch 4s infinite;
         }
 
-        /* Навигационная панель теперь распределяет элементы по краям */
         .hud-nav {
             display: flex;
             justify-content: space-between;
@@ -121,11 +120,17 @@
             gap: 15px;
         }
 
-        /* Блок мета-панели теперь аккуратно стоит справа в меню */
+        /* 🌟 По умолчанию скрываем статистику на других вкладках */
         .roster-meta-panel {
-            display: flex;
+            display: none; 
             gap: 15px;
             align-items: center;
+        }
+
+        /* Показываем её, только когда добавляется класс active */
+        .roster-meta-panel.active {
+            display: flex;
+            animation: fadeIn 0.3s ease-in-out;
         }
 
         .meta-box {
@@ -457,8 +462,8 @@
                 <button class="nav-btn" onclick="switchTab('achievements-tab', this)">Достижения</button>
             </div>
             
-            <!-- 🌟 Общая статистика теперь красиво и аккуратно выровнена по правому краю меню вкладок -->
-            <div class="roster-meta-panel">
+            <!-- Общая статистика в меню -->
+            <div id="hud-meta-panel" class="roster-meta-panel">
                 <div class="meta-box"><div class="meta-label">AVG ELO</div><div class="meta-val" id="avg-elo">1770</div></div>
                 <div class="meta-box"><div class="meta-label">ROSTER STATUS</div><div class="meta-val" style="color: #4ade80; font-size: 14px;">● ONLINE</div></div>
             </div>
@@ -524,6 +529,7 @@
             { nickname: "ArtemLob1", role: "Rifler", defaultLvl: 8, defaultElo: 1532, photo: "artem.png" }
         ];
 
+        /* 🌟 Обновленный переключатель вкладок */
         function switchTab(tabId, buttonElement) {
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
@@ -534,6 +540,14 @@
             
             document.getElementById(tabId).classList.add('active');
             buttonElement.classList.add('active');
+
+            // Управляем видимостью блока статистики
+            const metaPanel = document.getElementById('hud-meta-panel');
+            if (tabId === 'roster-tab') {
+                metaPanel.classList.add('active'); // Включаем на вкладке Состав
+            } else {
+                metaPanel.classList.remove('active'); // Прячем на остальных
+            }
         }
 
         async function fetchPlayerData(nickname) {

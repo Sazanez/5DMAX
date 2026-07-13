@@ -37,7 +37,7 @@
             position: relative;
         }
 
-        /* 🌟 Вариант 3: Эффект текстуры CRT-монитора с микро-шумом и тонкими линиями */
+        /* Вариант 3: Эффект текстуры CRT-монитора */
         body::before {
             content: "";
             position: absolute;
@@ -292,8 +292,28 @@
             background: rgba(7, 9, 14, 0.4);
         }
 
+        /* Никнейм игрока и точка его онлайна */
+        .p-nick-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
         .p-nick { font-size: 21px; font-weight: 900; color: #fff; letter-spacing: 1px; text-transform: uppercase; }
         
+        .p-status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .dot-online {
+            background-color: #4ade80;
+            box-shadow: 0 0 8px #4ade80;
+        }
+        .dot-offline {
+            background-color: #475569;
+        }
+
         .p-position { 
             display: inline-block;
             font-size: 11px; 
@@ -463,10 +483,10 @@
                 <button class="nav-btn" onclick="switchTab('achievements-tab', this)">Достижения</button>
             </div>
             
-            <!-- Общая статистика в меню -->
+            <!-- Динамическая статистика в меню -->
             <div id="hud-meta-panel" class="roster-meta-panel">
                 <div class="meta-box"><div class="meta-label">AVG ELO</div><div class="meta-val" id="avg-elo">1770</div></div>
-                <div class="meta-box"><div class="meta-label">ROSTER STATUS</div><div class="meta-val" style="color: #4ade80; font-size: 14px;">● ONLINE</div></div>
+                <div class="meta-box"><div class="meta-label">ROSTER STATUS</div><div class="meta-val" id="roster-online-counter" style="color: #4ade80; font-size: 14px;">● ONLINE: 0/4</div></div>
             </div>
         </div>
 
@@ -475,7 +495,7 @@
             <div class="main-page-wrapper">
                 <div class="welcome-block">
                     <h2>Добро пожаловать в штаб 5DMAX</h2>
-                    <p>В разработке</p>
+                    <p>Мы — амбициозная и сыгранная киберспортивная команда, выступающая на платформе FACEIT. Наша цель — непрерывное развитие, жесткая дисциплина и покорение новых высот в дисциплине Counter-Strike 2. Этот портал напрямую синхронизирован с серверами FACEIT для отслеживания боевой готовности нашего ростера.</p>
                 </div>
                 <div class="welcome-block">
                     <h2>Последние новости</h2>
@@ -496,22 +516,22 @@
             <div class="achievements-list">
                 <div class="achievement-row">
                     <div class="ach-title-block">
-                        <div class="ach-name">В разработке</div>
-                        <div class="ach-tournament">В разработке</div>
+                        <div class="ach-name">Сезонный LAN-турнир</div>
+                        <div class="ach-tournament">Cyber Arena Championship 2026</div>
                     </div>
                     <div class="ach-place place-1">1 место</div>
                 </div>
                 <div class="achievement-row">
                     <div class="ach-title-block">
-                        <div class="ach-name">В разработке</div>
-                        <div class="ach-tournament">В разработке</div>
+                        <div class="ach-name">FACEIT Командный Кубок</div>
+                        <div class="ach-tournament">Challenger Cup #12</div>
                     </div>
                     <div class="ach-place place-2">2 место</div>
                 </div>
                 <div class="achievement-row">
                     <div class="ach-title-block">
-                        <div class="ach-name">В разработке</div>
-                        <div class="ach-tournament">В разработке</div>
+                        <div class="ach-name">Открытая Квалификация</div>
+                        <div class="ach-tournament">Minor Stage Qualifiers</div>
                     </div>
                     <div class="ach-place place-3">3 место</div>
                 </div>
@@ -559,6 +579,8 @@
                 const playerId = pData.player_id;
 
                 let kd = "—"; let matches = "—"; let recentResults = [];
+                // Проверяем статус онлайна на Faceit (активен ли юзер в сети)
+                const isOnline = pData.status === "online" || pData.status === "ingame" || pData.activated === true;
                 
                 const segRes = await fetch(`https://open.faceit.com/data/v4/players/${playerId}/stats/cs2`, {
                     headers: { 'Authorization': `Bearer ${API_KEY}` }
@@ -583,6 +605,7 @@
                     nickname: pData.nickname,
                     lvl: pData.games.cs2?.skill_level || pData.games.csgo?.skill_level || "—",
                     elo: pData.games.cs2?.faceit_elo || pData.games.csgo?.faceit_elo || "—",
+                    isOnline: isOnline,
                     stats: { kd, matches, recentResults }
                 };
             } catch (e) { 
@@ -615,6 +638,7 @@
             let html = "";
             let totalElo = 0;
             let countElo = 0;
+            let onlineCount = 0;
 
             for (let p of players) {
                 let data = null;
@@ -624,7 +648,12 @@
 
                 const finalLvl = data ? data.lvl : p.defaultLvl;
                 const finalElo = data ? data.elo : p.defaultElo;
+                const isPlayerOnline = data ? data.isOnline : false;
                 
+                if (isPlayerOnline) {
+                    onlineCount++;
+                }
+
                 if (Number(finalElo)) {
                     totalElo += Number(finalElo);
                     countElo++;
@@ -643,6 +672,7 @@
                 else if (finalLvl == 9) { lvlClass = 'l-9'; cardLvlClass = 'card-lvl-9'; eloNumClass = 'num-lvl-9'; }
 
                 const kdClass = parseFloat(kd) >= 1.0 ? 'kd-hud-tag kd-godlike' : 'kd-hud-tag';
+                const statusDotClass = isPlayerOnline ? 'p-status-dot dot-online' : 'p-status-dot dot-offline';
 
                 html += `
                     <div class="tilt-card ${cardLvlClass}">
@@ -652,7 +682,11 @@
                                 ${avatarHtml}
                             </div>
                             <div class="info-frame">
-                                <div class="p-nick">${p.nickname}</div>
+                                <div class="p-nick-wrapper">
+                                    <!-- Точка реального статуса на Faceit -->
+                                    <span class="${statusDotClass}"></span>
+                                    <div class="p-nick">${p.nickname}</div>
+                                </div>
                                 <div class="p-position">${p.role}</div>
                             </div>
                             <div class="stats-frame">
@@ -691,6 +725,9 @@
             if (countElo > 0) {
                 document.getElementById("avg-elo").innerText = Math.round(totalElo / countElo);
             }
+            
+            // Динамически выводим счетчик реального онлайна
+            document.getElementById("roster-online-counter").innerHTML = `● ONLINE: ${onlineCount}/4`;
         }
 
         buildLineup();

@@ -9,7 +9,7 @@
             --glow-red: #ff1a00;
             --glow-orange: #ff5500;
             --glow-blue: #6366f1;
-            --bg-dark: #0a0c10;
+            --bg-dark: #05070b;
             
             /* 🌟 Твои актуальные настройки высоты */
             --pos-Magistr333: center 20%;  
@@ -26,8 +26,7 @@
 
         body { 
             font-family: 'Courier New', Courier, monospace, sans-serif; 
-            /* Глубокая основа для космоса/туманности */
-            background-color: #05070b;
+            background-color: var(--bg-dark);
             color: #e2e8f0; 
             min-height: 100vh;
             display: flex; 
@@ -36,99 +35,77 @@
             padding: 40px 20px;
             overflow-x: hidden;
             position: relative;
+            perspective: 1000px; /* Добавляем глубину для всей сцены */
         }
 
-        /* 🌟 Живой фон: Пульсирующие неоновые облака (туманность) */
-        .ambient-glow {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            pointer-events: none;
-            overflow: hidden;
-        }
-
-        .glow-cloud-1, .glow-cloud-2 {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(140px);
-            opacity: 0.12;
-            mix-blend-mode: screen;
-        }
-
-        /* Красное облако слева вверху */
-        .glow-cloud-1 {
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, var(--glow-red) 0%, transparent 70%);
-            top: -10%;
-            left: -10%;
-            animation: floatGlow1 20s ease-in-out infinite alternate;
-        }
-
-        /* Сине-фиолетовое облако справа внизу */
-        .glow-cloud-2 {
-            width: 700px;
-            height: 700px;
-            background: radial-gradient(circle, var(--glow-blue) 0%, transparent 70%);
-            bottom: -15%;
-            right: -10%;
-            animation: floatGlow2 25s ease-in-out infinite alternate;
-        }
-
-        /* 🌟 Летающие частицы на фоне */
-        .particles-container {
+        /* 🌟 ЖИВОЙ ФОН: 3D-киберсетка (Synthwave Grid) */
+        .grid-scene {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             z-index: 0;
             pointer-events: none;
+            overflow: hidden;
+            background: radial-gradient(circle at 50% 30%, #150824 0%, var(--bg-dark) 80%);
+        }
+
+        /* Светящийся неоновый горизонт */
+        .grid-horizon-glow {
+            position: absolute;
+            top: 45%; left: 0; width: 100%; height: 150px;
+            background: linear-gradient(to bottom, transparent, rgba(255, 26, 0, 0.15), rgba(99, 102, 241, 0.2), transparent);
+            filter: blur(30px);
+            z-index: 1;
+        }
+
+        /* 3D Перспектива плоскости */
+        .grid-plane-wrapper {
+            position: absolute;
+            bottom: 0; left: 50%;
+            width: 300%; height: 60%;
+            transform: translateX(-50%) rotateX(75deg);
+            transform-origin: top center;
+            z-index: 2;
+        }
+
+        /* Движущаяся неоновая сетка */
+        .grid-plane {
+            width: 100%; height: 200%;
             background-image: 
-                radial-gradient(circle, rgba(255, 26, 0, 0.08) 1px, transparent 1px),
-                radial-gradient(circle, rgba(99, 102, 241, 0.08) 1.5px, transparent 1.5px);
-            background-size: 80px 80px, 130px 130px;
-            background-position: 0 0, 40px 40px;
-            animation: riseParticles 60s linear infinite;
+                linear-gradient(90deg, rgba(99, 102, 241, 0.18) 2px, transparent 2px),
+                linear-gradient(rgba(255, 26, 0, 0.18) 2px, transparent 2px);
+            background-size: 60px 60px;
+            animation: gridDrive 16s linear infinite;
+            /* Эффект свечения линий */
+            box-shadow: inset 0 0 100px rgba(99, 102, 241, 0.1);
         }
 
-        /* Анимации плавающих неоновых облаков */
-        @keyframes floatGlow1 {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(80px, 50px) scale(1.2); }
+        /* Анимация движения сетки "на игрока" */
+        @keyframes gridDrive {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(120px); } /* Смещение кратно размеру ячейки */
         }
 
-        @keyframes floatGlow2 {
-            0% { transform: translate(0, 0) scale(1.1); }
-            100% { transform: translate(-100px, -60px) scale(0.9); }
-        }
-
-        /* Анимация медленного подъема частиц вверх */
-        @keyframes riseParticles {
-            0% { background-position: 0 0, 40px 40px; }
-            100% { background-position: 0 -800px, 40px -1040px; }
-        }
-
-        /* Вариант 3: Эффект текстуры CRT-монитора с микро-шумом */
+        /* Мелкая CRT-текстура монитора поверх всего */
         body::before {
             content: "";
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
             background: 
-                linear-gradient(rgba(18, 24, 38, 0) 50%, rgba(0, 0, 0, 0.2) 50%),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.012) 1px, transparent 1px) 0 0 / 20px 20px,
-                linear-gradient(rgba(255, 255, 255, 0.012) 1px, transparent 1px) 0 0 / 20px 20px;
+                linear-gradient(rgba(18, 24, 38, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.01) 1px, transparent 1px) 0 0 / 20px 20px,
+                linear-gradient(rgba(255, 255, 255, 0.01) 1px, transparent 1px) 0 0 / 20px 20px;
             background-size: 100% 4px, 40px 40px, 40px 40px;
-            z-index: 2;
+            z-index: 4;
             pointer-events: none;
         }
 
+        /* Движущаяся линия сканирования */
         .bg-lines {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 1;
+            z-index: 3;
             pointer-events: none;
-            opacity: 0.12;
+            opacity: 0.1;
             background: linear-gradient(180deg, rgba(239, 64, 64, 0) 0%, rgba(239, 64, 64, 0.08) 50%, rgba(239, 64, 64, 0) 100%);
             animation: scanline 8s linear infinite;
         }
@@ -138,18 +115,19 @@
             100% { transform: translateY(100%); }
         }
 
+        /* КОРПУС ТЕРМИНАЛА */
         .hud-terminal {
             width: 100%;
             max-width: 1400px;
-            background: rgba(10, 14, 22, 0.75); /* Сделали терминал чуть плотнее, чтобы текст читался идеально */
+            background: rgba(8, 11, 18, 0.82); /* Чуть плотнее, чтобы сетка на фоне не мешала читать данные */
             border: 2px solid rgba(255, 255, 255, 0.05);
             border-radius: 20px;
             padding: 35px;
-            box-shadow: 0 0 60px rgba(0, 0, 0, 0.85), inset 0 0 30px rgba(99, 102, 241, 0.03);
+            box-shadow: 0 0 60px rgba(0, 0, 0, 0.9), inset 0 0 40px rgba(255, 26, 0, 0.02);
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
             position: relative;
-            z-index: 3;
+            z-index: 5;
         }
 
         .hud-terminal::before, .hud-terminal::after {
@@ -296,7 +274,7 @@
         }
 
         .tilt-card {
-            background: linear-gradient(135deg, rgba(20, 26, 38, 0.8) 0%, rgba(13, 17, 24, 0.9) 100%);
+            background: linear-gradient(135deg, rgba(20, 26, 38, 0.85) 0%, rgba(13, 17, 24, 0.95) 100%);
             border: 1px solid rgba(255, 255, 255, 0.04);
             border-radius: 16px;
             position: relative;
@@ -536,12 +514,13 @@
 </head>
 <body>
 
-    <!-- 🌟 Элементы живого бэкграунда -->
-    <div class="ambient-glow">
-        <div class="glow-cloud-1"></div>
-        <div class="glow-cloud-2"></div>
+    <!-- 🌟 Элементы живой 3D-киберсетки на фоне -->
+    <div class="grid-scene">
+        <div class="grid-horizon-glow"></div>
+        <div class="grid-plane-wrapper">
+            <div class="grid-plane"></div>
+        </div>
     </div>
-    <div class="particles-container"></div>
     <div class="bg-lines"></div>
 
     <div class="hud-terminal">

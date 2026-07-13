@@ -106,32 +106,38 @@
             animation: textGlitch 4s infinite;
         }
 
-        /* 🌟 Новая панель мета-стат для размещения внутри вкладки */
+        /* Навигационная панель теперь распределяет элементы по краям */
+        .hud-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 35px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 15px;
+        }
+
+        .nav-buttons-group {
+            display: flex;
+            gap: 15px;
+        }
+
+        /* Блок мета-панели теперь аккуратно стоит справа в меню */
         .roster-meta-panel {
             display: flex;
-            gap: 20px;
-            margin-bottom: 25px;
-            justify-content: flex-start;
+            gap: 15px;
+            align-items: center;
         }
 
         .meta-box {
             background: rgba(255,255,255,0.02);
             border: 1px solid rgba(255,255,255,0.05);
-            padding: 10px 20px;
+            padding: 8px 16px;
             border-radius: 8px;
             text-align: right;
         }
 
-        .meta-label { font-size: 11px; color: #64748b; text-transform: uppercase; }
-        .meta-val { font-size: 18px; font-weight: bold; color: #fff; margin-top: 2px; }
-
-        .hud-nav {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 35px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            padding-bottom: 10px;
-        }
+        .meta-label { font-size: 10px; color: #64748b; text-transform: uppercase; letter-spacing: 1px; }
+        .meta-val { font-size: 16px; font-weight: bold; color: #fff; margin-top: 2px; }
 
         .nav-btn {
             background: rgba(255, 255, 255, 0.02);
@@ -171,7 +177,7 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
@@ -436,18 +442,26 @@
     <div class="bg-lines"></div>
 
     <div class="hud-terminal">
-        <!-- HEADER TERMINAL (теперь чистый, только бренд) -->
+        <!-- HEADER TERMINAL -->
         <div class="hud-header">
             <div class="brand-zone">
                 <div class="team-title">5DMAX</div>
             </div>
         </div>
 
-        <!-- НАВИГАЦИОННЫЕ ВКЛАДКИ -->
+        <!-- НАВИГАЦИОННАЯ ПАНЕЛЬ -->
         <div class="hud-nav">
-            <button class="nav-btn active" onclick="switchTab('main-tab', this)">Главная</button>
-            <button class="nav-btn" onclick="switchTab('roster-tab', this)">Состав</button>
-            <button class="nav-btn" onclick="switchTab('achievements-tab', this)">Достижения</button>
+            <div class="nav-buttons-group">
+                <button class="nav-btn active" onclick="switchTab('main-tab', this)">Главная</button>
+                <button class="nav-btn" onclick="switchTab('roster-tab', this)">Состав</button>
+                <button class="nav-btn" onclick="switchTab('achievements-tab', this)">Достижения</button>
+            </div>
+            
+            <!-- 🌟 Общая статистика теперь красиво и аккуратно выровнена по правому краю меню вкладок -->
+            <div class="roster-meta-panel">
+                <div class="meta-box"><div class="meta-label">AVG ELO</div><div class="meta-val" id="avg-elo">1770</div></div>
+                <div class="meta-box"><div class="meta-label">ROSTER STATUS</div><div class="meta-val" style="color: #4ade80; font-size: 14px;">● ONLINE</div></div>
+            </div>
         </div>
 
         <!-- ================= ВКЛАДКА 1: ГЛАВНАЯ ================= -->
@@ -466,12 +480,6 @@
 
         <!-- ================= ВКЛАДКА 2: СОСТАВ ================= -->
         <div id="roster-tab" class="tab-content">
-            <!-- 🌟 ИНДИКАТОРЫ ПЕРЕНЕСЕНЫ СЮДА -->
-            <div class="roster-meta-panel">
-                <div class="meta-box"><div class="meta-label">AVG ELO</div><div class="meta-val" id="avg-elo">1770</div></div>
-                <div class="meta-box"><div class="meta-label">ROSTER STATUS</div><div class="meta-val" style="color: #4ade80; font-size: 14px;">● ONLINE</div></div>
-            </div>
-            
             <div class="roster-grid" id="lineup">
                 <div style="color: #64748b; padding: 50px; grid-column: span 5; text-align: center; font-size: 14px; letter-spacing: 2px; text-transform: uppercase;">Загрузка данных ростера...</div>
             </div>

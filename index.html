@@ -582,7 +582,7 @@
                 let kd = "—"; let matches = "—"; let recentResults = [];
                 let isOnline = false;
 
-                // 🌟 Проверяем, играет ли пользователь матч прямо сейчас (ongoing)
+                // Проверяем, играет ли пользователь матч прямо сейчас (ongoing)
                 try {
                     const activeMatchRes = await fetch(`https://open.faceit.com/data/v4/players/${playerId}/history?game=cs2&limit=1`, {
                         headers: { 'Authorization': `Bearer ${API_KEY}` }
@@ -614,14 +614,23 @@
                     matches = segData.lifetime["Matches"] || "—";
                     recentResults = segData.lifetime["Recent Results"] || [];
                     
-                    const avgKd = parseFloat(segData.lifetime["Average K/D Ratio"]) || 0;
-                    if (recentResults.length > 0) {
-                        const winFactor = (recentResults.filter(r => r === "1" || r === 1).length) / recentResults.length;
-                        kd = winFactor < 0.4 ? (avgKd * 0.85).toFixed(2) : avgKd.toFixed(2);
-                    } else {
-                        kd = avgKd.toFixed(2);
-                    }
+                    // 🌟 БЕРЕМ ЧИСТЫЙ И НАДЕЖНЫЙ K/D НАПРЯМУЮ С FACEIT
+                    const avgKd = parseFloat(segData.lifetime["Average K/D Ratio"]);
+                    kd = !isNaN(avgKd) ? avgKd.toFixed(2) : "—";
                 }
+                
+                return {
+                    nickname: pData.nickname,
+                    lvl: pData.games.cs2?.skill_level || pData.games.csgo?.skill_level || "—",
+                    elo: pData.games.cs2?.faceit_elo || pData.games.csgo?.faceit_elo || "—",
+                    isOnline: isOnline,
+                    stats: { kd, matches, recentResults }
+                };
+            } catch (e) { 
+                console.error("Ошибка при запросе данных игрока:", e);
+                return null; 
+            }
+        }
                 
                 return {
                     nickname: pData.nickname,

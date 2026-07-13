@@ -11,11 +11,11 @@
             --glow-blue: #6366f1;
             --bg-dark: #0a0c10;
             
-            /* 🌟 Индивидуальная подгонка высоты для каждого игрока */
-            --pos-Magistr333: center 20%;  /* Спускает фото Magistr, открывая логотип */
-            --pos-DZAGAA: center 8%;       /* DZAGAA оставляем как есть, у него всё ок */
-            --pos-Sazanchiks: center 18%;  /* Сильнее спускает фото Sazan */
-            --pos-ArtemLob1: center 28%;   /* Спускает фото Artem */
+            /* Индивидуальная подгонка высоты для каждого игрока */
+            --pos-Magistr333: center 18%;  
+            --pos-DZAGAA: center 25%;   
+            --pos-Sazanchiks: center 2%;  
+            --pos-ArtemLob1: center 22%;   
         }
 
         * {
@@ -89,7 +89,7 @@
             align-items: center;
             border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
             padding-bottom: 20px;
-            margin-bottom: 35px;
+            margin-bottom: 25px;
         }
 
         .brand-zone {
@@ -122,6 +122,90 @@
         .meta-label { font-size: 11px; color: #64748b; text-transform: uppercase; }
         .meta-val { font-size: 18px; font-weight: bold; color: #fff; margin-top: 2px; }
 
+        /* 🌟 Панель навигации (Вкладки) */
+        .hud-nav {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 35px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 10px;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #94a3b8;
+            padding: 12px 24px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            color: #fff;
+            border-color: rgba(255, 26, 0, 0.4);
+            background: rgba(255, 26, 0, 0.05);
+        }
+
+        .nav-btn.active {
+            color: #fff;
+            background: rgba(255, 26, 0, 0.15);
+            border-color: var(--glow-red);
+            box-shadow: 0 0 15px rgba(255, 26, 0, 0.2);
+        }
+
+        /* Управление видимостью контента */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(100px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Стили для Главной страницы */
+        .main-page-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            padding: 10px 5px;
+        }
+
+        .welcome-block {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 12px;
+        }
+
+        .welcome-block h2 {
+            font-size: 24px;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            color: #fff;
+            text-transform: uppercase;
+            border-left: 4px solid var(--glow-red);
+            padding-left: 15px;
+        }
+
+        .welcome-block p {
+            line-height: 1.6;
+            color: #94a3b8;
+            font-size: 15px;
+        }
+
+        /* Сетка состава */
         .roster-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -292,6 +376,51 @@
             animation: pulseGlowGreen 2s infinite alternate;
         }
 
+        /* 🌟 Стили для таблицы достижений */
+        .achievements-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .achievement-row {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .achievement-row:hover {
+            border-color: rgba(99, 102, 241, 0.3);
+            background: rgba(99, 102, 241, 0.02);
+        }
+
+        .ach-title-block {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .ach-name { font-size: 18px; font-weight: bold; color: #fff; letter-spacing: 1px; }
+        .ach-tournament { font-size: 12px; color: #64748b; text-transform: uppercase; }
+        
+        .ach-place {
+            font-size: 16px;
+            font-weight: 900;
+            padding: 6px 16px;
+            border-radius: 6px;
+            text-transform: uppercase;
+        }
+        
+        /* Цвета наград */
+        .place-1 { color: #f59e0b; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); text-shadow: 0 0 10px rgba(245, 158, 11, 0.4); }
+        .place-2 { color: #cbd5e1; background: rgba(203, 213, 225, 0.1); border: 1px solid rgba(203, 213, 225, 0.3); }
+        .place-3 { color: #b45309; background: rgba(180, 83, 9, 0.1); border: 1px solid rgba(180, 83, 9, 0.3); }
+
         @keyframes pulseGlowGreen {
             0% { text-shadow: 0 0 5px rgba(74, 222, 128, 0.4); opacity: 0.7; }
             100% { text-shadow: 0 0 15px rgba(74, 222, 128, 0.9); opacity: 1; }
@@ -310,6 +439,7 @@
     <div class="bg-lines"></div>
 
     <div class="hud-terminal">
+        <!-- HEADER TERMINAL -->
         <div class="hud-header">
             <div class="brand-zone">
                 <div class="team-title">5DMAX</div>
@@ -320,9 +450,62 @@
             </div>
         </div>
 
-        <div class="roster-grid" id="lineup">
-            <div style="color: #64748b; padding: 50px; grid-column: span 5; text-align: center; font-size: 14px; letter-spacing: 2px; text-transform: uppercase;">Загрузка данных...</div>
+        <!-- 🌟 НАВИГАЦИОННЫЕ ВКЛАДКИ -->
+        <div class="hud-nav">
+            <button class="nav-btn active" onclick="switchTab('main-tab', this)">Главная</button>
+            <button class="nav-btn" onclick="switchTab('roster-tab', this)">Состав</button>
+            <button class="nav-btn" onclick="switchTab('achievements-tab', this)">Достижения</button>
         </div>
+
+        <!-- ================= ВКЛАДКА 1: ГЛАВНАЯ ================= -->
+        <div id="main-tab" class="tab-content active">
+            <div class="main-page-wrapper">
+                <div class="welcome-block">
+                    <h2>Добро пожаловать в штаб 5DMAX</h2>
+                    <p>Мы — амбициозная и сыгранная киберспортивная команда, выступающая на платформе FACEIT. Наша цель — непрерывное развитие, жесткая дисциплина и покорение новых высот в дисциплине Counter-Strike 2. Этот портал напрямую синхронизирован с серверами FACEIT для отслеживания боевой готовности нашего ростера.</p>
+                </div>
+                <div class="welcome-block">
+                    <h2>Последние новости</h2>
+                    <p style="color: #64748b; font-style: italic;">Система готова к приему оперативных сводок и анонсов турниров. Блок будет обновляться по мере развития команды...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= ВКЛАДКА 2: СОСТАВ ================= -->
+        <div id="roster-tab" class="tab-content">
+            <div class="roster-grid" id="lineup">
+                <div style="color: #64748b; padding: 50px; grid-column: span 5; text-align: center; font-size: 14px; letter-spacing: 2px; text-transform: uppercase;">Загрузка данных ростера...</div>
+            </div>
+        </div>
+
+        <!-- ================= ВКЛАДКА 3: ДОСТИЖЕНИЯ ================= -->
+        <div id="achievements-tab" class="tab-content">
+            <div class="achievements-list">
+                <!-- Сюда можно вписывать ваши турнирные победы -->
+                <div class="achievement-row">
+                    <div class="ach-title-block">
+                        <div class="ach-name">Сезонный LAN-турнир</div>
+                        <div class="ach-tournament">Cyber Arena Championship 2026</div>
+                    </div>
+                    <div class="ach-place place-1">1 место</div>
+                </div>
+                <div class="achievement-row">
+                    <div class="ach-title-block">
+                        <div class="ach-name">FACEIT Командный Кубок</div>
+                        <div class="ach-tournament">Challenger Cup #12</div>
+                    </div>
+                    <div class="ach-place place-2">2 место</div>
+                </div>
+                <div class="achievement-row">
+                    <div class="ach-title-block">
+                        <div class="ach-name">Открытая Квалификация</div>
+                        <div class="ach-tournament">Minor Stage Qualifiers</div>
+                    </div>
+                    <div class="ach-place place-3">3 место</div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script>
@@ -334,6 +517,22 @@
             { nickname: "Sazanchiks", role: "Rifler", defaultLvl: 10, defaultElo: 2012, photo: "sazan.png" },
             { nickname: "ArtemLob1", role: "Rifler", defaultLvl: 8, defaultElo: 1532, photo: "artem.png" }
         ];
+
+        /* 🌟 Переключение вкладок без перезагрузки */
+        function switchTab(tabId, buttonElement) {
+            // Скрываем весь контент вкладок
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            // Убираем активный класс со всех кнопок навигации
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Показываем нужную вкладку и подсвечиваем кнопку
+            document.getElementById(tabId).classList.add('active');
+            buttonElement.classList.add('active');
+        }
 
         async function fetchPlayerData(nickname) {
             try {
@@ -416,7 +615,6 @@
                     countElo++;
                 }
 
-                /* 🌟 Применяем инлайновое CSS-переменное свойство для точечной центровки лиц и логотипов */
                 const avatarHtml = p.photo 
                     ? `<img src="${p.photo}" class="avatar-img" alt="${p.nickname}" style="object-position: var(--pos-${p.nickname}, center);" onerror="handleImgError(this, '${p.nickname}')">`
                     : `<div class="avatar-placeholder">${p.nickname.charAt(0)}</div>`;
@@ -433,7 +631,7 @@
 
                 html += `
                     <div class="tilt-card ${cardLvlClass}">
-                        <a href="https://www.faceit.com/ru/players/${p.nickname}" target="_blank" class="card-inner-link">
+                        <a href="https://www.faceit.com/ru/players/${p.nickname}" target="_blank" tabindex="-1" class="card-inner-link">
                             <div class="level-badge-3d ${lvlClass}">${finalLvl}</div>
                             <div class="avatar-frame">
                                 ${avatarHtml}

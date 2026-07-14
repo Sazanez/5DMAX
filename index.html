@@ -784,81 +784,50 @@
             }
         }
 
-        async function fetchPlayerData(nickname) {
-            try {
-                // 1. Получаем базовую информацию об игроке
-                const pRes = await fetch(`https://open.faceit.com/data/v4/players?nickname=${nickname}`, {
-                    headers: { 'Authorization': `Bearer ${API_KEY}` }
-                });
-                if (!pRes.ok) return null;
-                const pData = await pRes.json();
-                const playerId = pData.player_id;
+       async function fetchPlayerData(nickname) {
+    try {
+        // 1. Получаем ID игрока
+        const pRes = await fetch(`https://open.faceit.com/data/v4/players?nickname=${nickname}`, {
+            headers: { 'Authorization': `Bearer ${API_KEY}` }
+        });
+        if (!pRes.ok) return null;
+        const pData = await pRes.json();
+        const playerId = pData.player_id;
 
-                let kd = "—"; let matches = "—"; let recentResults = [];
-                let isOnline = false;
+        // 2. УЛУЧШЕННАЯ ПРОВЕРКА ОНЛАЙНА
+        let isOnline = false;
+        try {
+            // Проверяем последние 3 матча через API
+            const activeMatchRes = await fetch(`https://open.faceit.com/data/v4/players/${playerId}/history?game=cs2&limit=3`, {
+                headers: { 'Authorization': `Bearer ${API_KEY}` }
+            });
+            const activeMatchData = await activeMatchRes.json();
+            
+            // Если хоть один из последних 3 матчей имеет статус "ongoing" — игрок в игре
+            if (activeMatchData.items && activeMatchData.items.some(m => m.status === "ongoing")) {
+                isOnline = true;
+            }
+        } catch (e) { console.error("Ошибка API онлайна:", e); }
 
-                // Проверяем, играет ли пользователь матч прямо сейчас (ongoing)
-                try {
-                    const activeMatchRes = await fetch(`https://open.faceit.com/data/v4/players/${playerId}/history?game=cs2&limit=1`, {
-                        headers: { 'Authorization': `Bearer ${API_KEY}` }
-                    });
-                    if (activeMatchRes.ok) {
-                        const activeMatchData = await activeMatchRes.json();
-                        if (activeMatchData.items && activeMatchData.items[0] && activeMatchData.items[0].status === "ongoing") {
-                            isOnline = true;
-                        }
-                    }
-                } catch (matchErr) {
-                    console.error("Ошибка проверки активного матча: ", matchErr);
-                }
+        // Дополнительная проверка статуса профиля
+        if (!isOnline && pData.status === "ingame") {
+            isOnline = true;
+        }
+        
+        // 3. Рассчитываем K/D и остальные данные (оставь свой код здесь без изменений)
+        // ... (твой существующий код для расчета KD и ELO) ...
 
-                // Если в игре не обнаружен, делаем базовую проверку статуса FACEIT
-                if (!isOnline) {
-                    isOnline = pData.status === "online" || pData.status === "ingame" || pData.activated === true;
-                }
-                
-                // 2. Получаем историю и рассчитываем K/D за последние 20 матчей (limit=20)
-                const historyRes = await fetch(`https://open.faceit.com/data/v4/players/${playerId}/history?game=cs2&limit=20`, {
-                    headers: { 'Authorization': `Bearer ${API_KEY}` }
-                });
-                
-                let calculatedKd = 0;
-                let validMatchesCount = 0;
-                
-                if (historyRes.ok) {
-                    const historyData = await historyRes.json();
-                    if (historyData.items && historyData.items.length > 0) {
-                        let totalKills = 0;
-                        let totalDeaths = 0;
-                        
-                        // Запрашиваем детальную статистику каждого матча для точного расчёта K/D
-                        const statsPromises = historyData.items.map(match => {
-                            return fetch(`https://open.faceit.com/data/v4/matches/${match.match_id}/stats`, {
-                                headers: { 'Authorization': `Bearer ${API_KEY}` }
-                            }).then(res => res.ok ? res.json() : null).catch(() => null);
-                        });
-                        
-                        const allMatchesStats = await Promise.all(statsPromises);
-                        
-                        allMatchesStats.forEach(matchStats => {
-                            if (matchStats && matchStats.rounds) {
-                                matchStats.rounds.forEach(round => {
-                                    const playerStats = round.teams.flatMap(t => t.players).find(p => p.player_id === playerId);
-                                    if (playerStats) {
-                                        const kills = parseInt(playerStats.player_stats.Kills) || 0;
-                                        const deaths = parseInt(playerStats.player_stats.Deaths) || 0;
-                                        totalKills += kills;
-                                        totalDeaths += deaths;
-                                        validMatchesCount++;
-                                    }
-                                });
-                            }
-                        });
-                        
-                        if (totalDeaths > 0) {
-                            calculatedKd = totalKills / totalDeaths;
-                        }
-                    }
+        return {
+            nickname: pData.nickname,
+            lvl: pData.games.cs2?.skill_level || 8,
+            elo: pData.games.cs2?.faceit_elo || 1500,
+            isOnline: isOnline
+        };
+    } catch (e) { 
+        console.error("Ошибка:", e);
+        return null; 
+    }
+}
                 }
 
                 // 3. Получаем глобальную статистику по CS2 (для общего числа матчей и последних результатов)

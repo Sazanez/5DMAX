@@ -225,14 +225,24 @@
             border-radius: 12px;
         }
 
-        .welcome-block h2 {
-            font-size: 24px;
+       .welcome-block h2 {
+            font-size: 28px;  /* Увеличили размер (было 24px) */
             letter-spacing: 2px;
-            margin-bottom: 15px;
-            color: #fff;
+            margin-bottom: 22px; /* Увеличили отступ до текста (было 15px) */
+            color: var(--glow-red); /* Сделали фирменным ярко-красным */
             text-transform: uppercase;
             border-left: 4px solid var(--glow-red);
             padding-left: 15px;
+            /* Добавили сочное красное свечение */
+            text-shadow: 0 0 15px rgba(255, 26, 0, 0.5); 
+        }
+
+        /* 📱 Адаптация заголовков под телефоны */
+        @media (max-width: 480px) {
+            .welcome-block h2 {
+                font-size: 22px; /* На мобилках делаем чуть компактнее, но оставляем ярким */
+                margin-bottom: 15px;
+            }
         }
 
         /* 🌟 НАСТРОЙКИ КРУПНОГО И КОНТРАСТНОГО ШРИФТА ДЛЯ ОПИСАНИЯ И НОВОСТЕЙ */

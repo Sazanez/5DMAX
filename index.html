@@ -226,21 +226,21 @@
         }
 
        .welcome-block h2 {
-            font-size: 28px;  /* Увеличили размер (было 24px) */
-            letter-spacing: 2px;
-            margin-bottom: 22px; /* Увеличили отступ до текста (было 15px) */
-            color: var(--glow-red); /* Сделали фирменным ярко-красным */
+            font-size: 28px;           /* Крупнее, чтобы сразу выделялись */
+            letter-spacing: 3px;       /* Добавили больше воздуха между буквами */
+            margin-bottom: 22px; 
+            color: #ffffff;            /* Чистый белый, чтобы был контраст к серому фону */
             text-transform: uppercase;
-            border-left: 4px solid var(--glow-red);
+            border-left: 4px solid var(--glow-red); /* Красная полоска остается как акцент */
             padding-left: 15px;
-            /* Добавили сочное красное свечение */
-            text-shadow: 0 0 15px rgba(255, 26, 0, 0.5); 
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3); /* Очень мягкое свечение */
+            font-weight: 900;          /* Максимально жирный шрифт */
         }
 
         /* 📱 Адаптация заголовков под телефоны */
         @media (max-width: 480px) {
             .welcome-block h2 {
-                font-size: 22px; /* На мобилках делаем чуть компактнее, но оставляем ярким */
+                font-size: 22px; 
                 margin-bottom: 15px;
             }
         }

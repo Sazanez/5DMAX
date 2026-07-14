@@ -225,32 +225,25 @@
             border-radius: 12px;
         }
 
-       .welcome-block h2 {
-            font-size: 28px;           /* Крупнее, чтобы сразу выделялись */
-            letter-spacing: 3px;       /* Добавили больше воздуха между буквами */
-            margin-bottom: 22px; 
-            color: #ffffff;            /* Чистый белый, чтобы был контраст к серому фону */
+        /* 🌟 ОБНОВЛЕННЫЕ СТИЛИ ПОДЗАГОЛОВКОВ (БЕЛЫЕ, ЖИРНЫЕ, ОБЪЕМНЫЕ) */
+        .welcome-block h2 {
+            font-size: 28px;
+            letter-spacing: 3px;
+            margin-bottom: 22px;
+            color: #ffffff;
             text-transform: uppercase;
-            border-left: 4px solid var(--glow-red); /* Красная полоска остается как акцент */
+            border-left: 4px solid var(--glow-red);
             padding-left: 15px;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3); /* Очень мягкое свечение */
-            font-weight: 900;          /* Максимально жирный шрифт */
-        }
-
-        /* 📱 Адаптация заголовков под телефоны */
-        @media (max-width: 480px) {
-            .welcome-block h2 {
-                font-size: 22px; 
-                margin-bottom: 15px;
-            }
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            font-weight: 900;
         }
 
         /* 🌟 НАСТРОЙКИ КРУПНОГО И КОНТРАСТНОГО ШРИФТА ДЛЯ ОПИСАНИЯ И НОВОСТЕЙ */
         .welcome-block p, .welcome-block p span {
             line-height: 1.8; /* Увеличили расстояние между строками */
             color: #ffffff;   /* Сделали текст чисто белым и контрастным */
-            font-size: 18px;  /* Увеличили размер шрифта (было 15px) */
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.15); /* Добавили легкое неоновое свечение буквам */
+            font-size: 18px;  /* Увеличили размер шрифта */
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.15); /* Мягкое свечение */
         }
 
         /* СТИЛИ ДЛЯ БЛОКА ТУРНИРОВ */
@@ -635,11 +628,13 @@
                 padding: 20px 15px;
             }
 
+            /* 📱 Крупный и четкий шрифт для мобильной версии подзаголовков */
             .welcome-block h2 {
-                font-size: 18px;
+                font-size: 22px;
+                margin-bottom: 15px;
             }
 
-            /* 📱 Крупный и четкий шрифт для мобильной версии */
+            /* 📱 Крупный и четкий шрифт для мобильной версии описания */
             .welcome-block p, .welcome-block p span {
                 font-size: 15px; 
                 line-height: 1.6;
@@ -784,50 +779,82 @@
             }
         }
 
-       async function fetchPlayerData(nickname) {
-    try {
-        // 1. Получаем ID игрока
-        const pRes = await fetch(`https://open.faceit.com/data/v4/players?nickname=${nickname}`, {
-            headers: { 'Authorization': `Bearer ${API_KEY}` }
-        });
-        if (!pRes.ok) return null;
-        const pData = await pRes.json();
-        const playerId = pData.player_id;
+        async function fetchPlayerData(nickname) {
+            try {
+                // 1. Получаем базовую информацию об игроке
+                const pRes = await fetch(`https://open.faceit.com/data/v4/players?nickname=${nickname}`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
+                if (!pRes.ok) return null;
+                const pData = await pRes.json();
+                const playerId = pData.player_id;
 
-        // 2. УЛУЧШЕННАЯ ПРОВЕРКА ОНЛАЙНА
-        let isOnline = false;
-        try {
-            // Проверяем последние 3 матча через API
-            const activeMatchRes = await fetch(`https://open.faceit.com/data/v4/players/${playerId}/history?game=cs2&limit=3`, {
-                headers: { 'Authorization': `Bearer ${API_KEY}` }
-            });
-            const activeMatchData = await activeMatchRes.json();
-            
-            // Если хоть один из последних 3 матчей имеет статус "ongoing" — игрок в игре
-            if (activeMatchData.items && activeMatchData.items.some(m => m.status === "ongoing")) {
-                isOnline = true;
-            }
-        } catch (e) { console.error("Ошибка API онлайна:", e); }
+                let kd = "—"; let matches = "—"; let recentResults = [];
+                let isOnline = false;
 
-        // Дополнительная проверка статуса профиля
-        if (!isOnline && pData.status === "ingame") {
-            isOnline = true;
-        }
-        
-        // 3. Рассчитываем K/D и остальные данные (оставь свой код здесь без изменений)
-        // ... (твой существующий код для расчета KD и ELO) ...
+                // 🌟 УЛУЧШЕННЫЙ И НАДЕЖНЫЙ ПОИСК СТАТУСА ОНЛАЙН (Смотрим до 3 последних матчей)
+                try {
+                    const activeMatchRes = await fetch(`https://open.faceit.com/data/v4/players/${playerId}/history?game=cs2&limit=3`, {
+                        headers: { 'Authorization': `Bearer ${API_KEY}` }
+                    });
+                    if (activeMatchRes.ok) {
+                        const activeMatchData = await activeMatchRes.json();
+                        // Если хотя бы у одной игры из последних 3 статус "ongoing", значит игрок в катке
+                        if (activeMatchData.items && activeMatchData.items.some(m => m.status === "ongoing")) {
+                            isOnline = true;
+                        }
+                    }
+                } catch (matchErr) {
+                    console.error("Ошибка проверки активного матча: ", matchErr);
+                }
 
-        return {
-            nickname: pData.nickname,
-            lvl: pData.games.cs2?.skill_level || 8,
-            elo: pData.games.cs2?.faceit_elo || 1500,
-            isOnline: isOnline
-        };
-    } catch (e) { 
-        console.error("Ошибка:", e);
-        return null; 
-    }
-}
+                // Дополнительная проверка системного статуса профиля FACEIT
+                if (!isOnline) {
+                    isOnline = pData.status === "online" || pData.status === "ingame" || pData.status === "playing" || pData.activated === true;
+                }
+                
+                // 2. Получаем историю и рассчитываем K/D за последние 20 матчей (limit=20)
+                const historyRes = await fetch(`https://open.faceit.com/data/v4/players/${playerId}/history?game=cs2&limit=20`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                });
+                
+                let calculatedKd = 0;
+                let validMatchesCount = 0;
+                
+                if (historyRes.ok) {
+                    const historyData = await historyRes.json();
+                    if (historyData.items && historyData.items.length > 0) {
+                        let totalKills = 0;
+                        let totalDeaths = 0;
+                        
+                        // Запрашиваем детальную статистику каждого матча для точного расчёта K/D
+                        const statsPromises = historyData.items.map(match => {
+                            return fetch(`https://open.faceit.com/data/v4/matches/${match.match_id}/stats`, {
+                                headers: { 'Authorization': `Bearer ${API_KEY}` }
+                            }).then(res => res.ok ? res.json() : null).catch(() => null);
+                        });
+                        
+                        const allMatchesStats = await Promise.all(statsPromises);
+                        
+                        allMatchesStats.forEach(matchStats => {
+                            if (matchStats && matchStats.rounds) {
+                                matchStats.rounds.forEach(round => {
+                                    const playerStats = round.teams.flatMap(t => t.players).find(p => p.player_id === playerId);
+                                    if (playerStats) {
+                                        const kills = parseInt(playerStats.player_stats.Kills) || 0;
+                                        const deaths = parseInt(playerStats.player_stats.Deaths) || 0;
+                                        totalKills += kills;
+                                        totalDeaths += deaths;
+                                        validMatchesCount++;
+                                    }
+                                });
+                            }
+                        });
+                        
+                        if (totalDeaths > 0) {
+                            calculatedKd = totalKills / totalDeaths;
+                        }
+                    }
                 }
 
                 // 3. Получаем глобальную статистику по CS2 (для общего числа матчей и последних результатов)

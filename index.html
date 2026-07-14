@@ -139,6 +139,7 @@
             margin-bottom: 35px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             padding-bottom: 15px;
+            gap: 15px;
         }
 
         .nav-buttons-group {
@@ -297,6 +298,7 @@
             background: rgba(245, 158, 11, 0.05);
         }
 
+        /* 🌟 СЕТКА СОСТАВА (Базовая для ПК) */
         .roster-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -540,6 +542,105 @@
             21% { transform: skew(3deg); }
             22% { transform: skew(0deg); }
         }
+
+        /* 🌟 АДАПТИВНОСТЬ ПОД МОБИЛЬНЫЕ УСТРОЙСТВА 🌟 */
+        
+        /* Планшетная версия */
+        @media (max-width: 1024px) {
+            .roster-grid {
+                grid-template-columns: repeat(3, 1fr); /* 3 игрока в ряд */
+                gap: 20px;
+            }
+            .searching-node {
+                min-height: auto;
+                aspect-ratio: 1/1.5;
+            }
+        }
+
+        /* Крупные телефоны */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px 10px;
+            }
+            .hud-terminal {
+                padding: 20px 15px;
+                border-radius: 12px;
+            }
+            .hud-terminal::before { border-top-left-radius: 12px; }
+            .hud-terminal::after { border-bottom-right-radius: 12px; }
+            
+            .team-title {
+                font-size: 28px;
+            }
+            
+            .hud-nav {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 15px;
+            }
+
+            .nav-buttons-group {
+                justify-content: space-between;
+                width: 100%;
+            }
+
+            .nav-btn {
+                padding: 10px 15px;
+                font-size: 12px;
+                flex: 1;
+                text-align: center;
+            }
+
+            .roster-meta-panel {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .meta-box {
+                flex: 1;
+                text-align: center;
+            }
+
+            .roster-grid {
+                grid-template-columns: repeat(2, 1fr); /* 2 игрока в ряд */
+                gap: 15px;
+            }
+        }
+
+        /* Маленькие телефоны */
+        @media (max-width: 480px) {
+            .roster-grid {
+                grid-template-columns: 1fr; /* 1 колонка — по одному крупному игроку на всю ширину */
+                gap: 20px;
+            }
+
+            .searching-node {
+                min-height: 200px;
+                aspect-ratio: auto;
+            }
+
+            .welcome-block {
+                padding: 20px 15px;
+            }
+
+            .welcome-block h2 {
+                font-size: 18px;
+            }
+
+            .welcome-block p {
+                font-size: 13px;
+            }
+
+            .tournament-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .tourney-status {
+                align-self: flex-start;
+            }
+        }
     </style>
 </head>
 <body>
@@ -576,7 +677,7 @@
         <!-- ================= ВКЛАДКА 1: ГЛАВНАЯ ================= -->
         <div id="main-tab" class="tab-content active">
             <div class="main-page-wrapper">
-                <!-- 🌟 1. Добро пожаловать (ОБНОВЛЕННЫЙ ЛАКОНИЧНЫЙ ВАРИАНТ) -->
+                <!-- 🌟 1. Добро пожаловать -->
                 <div class="welcome-block">
                     <h2>Добро пожаловать на сайт 5DMAX</h2>
                     <p>Этот портал напрямую синхронизирован с серверами FACEIT для отслеживания боевой готовности нашего ростера.</p>

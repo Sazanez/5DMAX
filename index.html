@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>5DMAX</title>
-    <!-- 🌟 СТРОКА ДЛЯ ОТОБРАЖЕНИЯ ВАШЕГО ЛОГОТИПА ВМЕСТО ПЛАНЕТЫ -->
-    <link rel="icon" href="logo.png" type="image/png">
+    <!-- 🌟 Твой новый логотип во вкладке браузера -->
+    <link class="js-favicon" rel="icon" href="logo.png" type="image/png">
     
     <style>
         :root {
@@ -14,7 +14,7 @@
             --glow-blue: #6366f1;
             --bg-dark: #07090e;
             
-            /* 🌟 Твои актуальные настройки высоты */
+            /* 🌟 Твои актуальные настройки высоты аватарок */
             --pos-Magistr333: center 20%;  
             --pos-DZAGAA: center 9%;   
             --pos-Sazanchiks: center 20%;  
@@ -60,7 +60,6 @@
             mix-blend-mode: screen;
         }
 
-        /* Кроваво-красное свечение слева вверху */
         .glow-cloud-1 {
             width: 700px;
             height: 700px;
@@ -70,7 +69,6 @@
             animation: floatGlow1 15s ease-in-out infinite alternate;
         }
 
-        /* Насыщенный синий ультрафиолет справа внизу */
         .glow-cloud-2 {
             width: 800px;
             height: 800px;
@@ -240,6 +238,63 @@
             line-height: 1.6;
             color: #94a3b8;
             font-size: 15px;
+        }
+
+        /* 🌟 СТИЛИ ДЛЯ БЛОКА ТУРНИРОВ */
+        .tournaments-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .tournament-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            padding: 15px 20px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .tournament-item:hover {
+            border-color: rgba(255, 26, 0, 0.2);
+            background: rgba(255, 26, 0, 0.02);
+        }
+
+        .tourney-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .tourney-name {
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+            letter-spacing: 1px;
+        }
+
+        .tourney-date {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .tourney-status {
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 4px 10px;
+            border-radius: 5px;
+        }
+
+        .status-expected {
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            background: rgba(245, 158, 11, 0.05);
         }
 
         .roster-grid {
@@ -521,10 +576,34 @@
         <!-- ================= ВКЛАДКА 1: ГЛАВНАЯ ================= -->
         <div id="main-tab" class="tab-content active">
             <div class="main-page-wrapper">
+                <!-- 1. Добро пожаловать -->
                 <div class="welcome-block">
                     <h2>Добро пожаловать в штаб 5DMAX</h2>
                     <p>Мы — амбициозная и сыгранная киберспортивная команда, выступающая на платформе FACEIT. Наша цель — непрерывное развитие, жесткая дисциплина и покорение новых высот в дисциплине Counter-Strike 2. Этот портал напрямую синхронизирован с серверами FACEIT для отслеживания боевой готовности нашего ростера.</p>
                 </div>
+
+                <!-- 🌟 2. Ближайшие турниры (НОВЫЙ БЛОК) -->
+                <div class="welcome-block">
+                    <h2>Ближайшие турниры</h2>
+                    <div class="tournaments-container">
+                        <div class="tournament-item">
+                            <div class="tourney-info">
+                                <span class="tourney-name">FACEIT Cup: Season Kickoff #1</span>
+                                <span class="tourney-date">Ожидается регистрация • CS2 5v5</span>
+                            </div>
+                            <span class="tourney-status status-expected">Ожидается</span>
+                        </div>
+                        <div class="tournament-item">
+                            <div class="tourney-info">
+                                <span class="tourney-name">CyberArena CS2 Amateur Cup</span>
+                                <span class="tourney-date">Август 2026 • Квалификации</span>
+                            </div>
+                            <span class="tourney-status status-expected">Ожидается</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Последние новости -->
                 <div class="welcome-block">
                     <h2>Последние новости</h2>
                     <p style="color: #64748b; font-style: italic;">Система готова к приему оперативных сводок и анонсов турниров. Блок будет обновляться по мере развития команды...</p>
